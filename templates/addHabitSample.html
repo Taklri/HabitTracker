@@ -1,126 +1,277 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Add Habit</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Habit - HabitUp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white"
+  >
+    <!-- Header -->
+    <nav
+      class="bg-slate-800/95 backdrop-blur border-b border-slate-700 shadow-md"
+    >
+      <div
+        class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center"
+      >
+        <h1 class="text-2xl font-bold text-emerald-400">HabitUp</h1>
+        <a
+          href="/dashboard"
+          class="text-slate-300 hover:text-slate-100 transition"
+          >← Back</a
+        >
+      </div>
+    </nav>
 
-    <form action="/add-habit" method="POST">
+    <!-- Main Content -->
+    <main class="max-w-2xl mx-auto px-4 py-8">
+      <div
+        class="rounded-3xl border border-slate-700 bg-slate-800/95 p-8 shadow-lg shadow-slate-900/50 backdrop-blur"
+      >
+        <h2 class="text-3xl font-bold text-slate-100 mb-2">Add New Habit</h2>
+        <p class="text-slate-400 mb-8">Create a new habit to start tracking</p>
 
-        <div>
-            <label>Habit Name:</label>
-            <input type="text" name="habitName">
-        </div>
+        <form action="/add-habit" method="POST" class="space-y-6">
+          <!-- Habit Name -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 mb-2"
+              >Habit Name</label
+            >
+            <input
+              type="text"
+              name="habitName"
+              placeholder="e.g., Morning Exercise"
+              required
+              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
+            />
+          </div>
 
-        <div>
-            <label>Habit Category:</label>
-            <select name="habitCategory">
-                <option value="health">Health</option>
-                <option value="productivity">Productivity</option>
-                <option value="learning">Learning</option>
+          <!-- Habit Category -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 mb-2"
+              >Category</label
+            >
+            <select
+              name="habitCategory"
+              required
+              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
+            >
+              <option value="">Select a category</option>
+              <option value="health">Health</option>
+              <option value="productivity">Productivity</option>
+              <option value="learning">Learning</option>
             </select>
-        </div>
+          </div>
 
-        <div>
-            <label>Habit Description:</label>
-            <textarea name="habitDescription"></textarea>
-        </div>
-        
-        <div>
-            <label>Habit Frequency:</label>
-            <select name="habitFrequency">
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
+          <!-- Habit Description -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 mb-2"
+              >Description</label
+            >
+            <textarea
+              name="habitDescription"
+              placeholder="Describe your habit..."
+              rows="4"
+              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
+            ></textarea>
+          </div>
+
+          <!-- Habit Frequency -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 mb-2"
+              >Frequency</label
+            >
+            <select
+              name="habitFrequency"
+              required
+              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
+            >
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
             </select>
-        </div>
+          </div>
 
-        <!-- Weekly days: shown only when Frequency is set to "weekly" -->
-        <div id="weekly-days" style="display:none; margin-top:12px;">
-            <label style="font-weight:700; display:block; margin-bottom:6px;">Weekly Days:</label>
-            <div>
-                <label><input type="checkbox" name="weeklyDays" value="monday"> Monday</label>
-                <label style="margin-left:12px;"><input type="checkbox" name="weeklyDays" value="tuesday"> Tuesday</label>
-                <label style="margin-left:12px;"><input type="checkbox" name="weeklyDays" value="wednesday"> Wednesday</label>
-                <label style="margin-left:12px;"><input type="checkbox" name="weeklyDays" value="thursday"> Thursday</label>
-                <label style="margin-left:12px;"><input type="checkbox" name="weeklyDays" value="friday"> Friday</label>
-                <label style="margin-left:12px;"><input type="checkbox" name="weeklyDays" value="saturday"> Saturday</label>
-                <label style="margin-left:12px;"><input type="checkbox" name="weeklyDays" value="sunday"> Sunday</label>
+          <!-- Weekly Days -->
+          <div id="weekly-days" class="hidden">
+            <label class="block text-sm font-semibold text-slate-300 mb-3"
+              >Select Days</label
+            >
+            <div class="grid grid-cols-2 gap-3">
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="weeklyDays"
+                  value="monday"
+                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
+                />
+                <span class="text-slate-300">Monday</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="weeklyDays"
+                  value="tuesday"
+                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
+                />
+                <span class="text-slate-300">Tuesday</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="weeklyDays"
+                  value="wednesday"
+                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
+                />
+                <span class="text-slate-300">Wednesday</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="weeklyDays"
+                  value="thursday"
+                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
+                />
+                <span class="text-slate-300">Thursday</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="weeklyDays"
+                  value="friday"
+                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
+                />
+                <span class="text-slate-300">Friday</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="weeklyDays"
+                  value="saturday"
+                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
+                />
+                <span class="text-slate-300">Saturday</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="weeklyDays"
+                  value="sunday"
+                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
+                />
+                <span class="text-slate-300">Sunday</span>
+              </label>
             </div>
-        </div>
+          </div>
 
-        <!-- Monthly options: shown only when Frequency is set to "monthly" -->
-        <div id="monthly-options" style="display:none; margin-top:12px;">
-            <label style="font-weight:700; display:block; margin-bottom:6px;">Day of month</label>
-            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-                <input id="monthlyDay" type="number" name="monthlyDay" min="1" max="31" value="1" inputmode="numeric" pattern="\d*" style="width:80px;">
+          <!-- Monthly Day -->
+          <div id="monthly-options" class="hidden">
+            <label class="block text-sm font-semibold text-slate-300 mb-2"
+              >Day of Month</label
+            >
+            <input
+              id="monthlyDay"
+              type="number"
+              name="monthlyDay"
+              min="1"
+              max="31"
+              value="1"
+              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
+            />
+            <div id="monthly-error" class="hidden mt-2 text-sm text-red-400">
+              Enter a number between 1 and 31.
             </div>
-            <div id="monthly-error" style="margin-top:8px; color:#b91c1c; font-size:13px; display:none;">Enter a number between 1 and 31.</div>
-            <div style="margin-top:8px; color:#6b7280; font-size:13px;">Enter the day of month (1-31). Invalid dates (e.g., 31 on short months) should be handled server-side.</div>
-        </div>
-        
-        <div>
-            <input type="submit" value="Add Habit">
-        </div>
+            <p class="text-sm text-slate-400 mt-2">
+              Enter the day of month (1-31)
+            </p>
+          </div>
 
-    </form>
+          <!-- Buttons -->
+          <div class="flex gap-3 pt-4">
+            <button
+              type="submit"
+              class="flex-1 bg-emerald-700 text-white px-6 py-3 rounded-xl hover:bg-emerald-800 font-semibold transition"
+            >
+              Add Habit
+            </button>
+            <a
+              href="/dashboard"
+              class="flex-1 bg-slate-700 text-slate-200 px-6 py-3 rounded-xl hover:bg-slate-600 font-semibold transition text-center"
+            >
+              Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </main>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const freqSelect = document.querySelector('select[name="habitFrequency"]');
-            const weeklyBlock = document.getElementById('weekly-days');
-            const monthlyBlock = document.getElementById('monthly-options');
-            const monthlyDay = document.getElementById('monthlyDay');
-            const monthlyError = document.getElementById('monthly-error');
-            if (!freqSelect) return;
+      document.addEventListener("DOMContentLoaded", function () {
+        const freqSelect = document.querySelector(
+          'select[name="habitFrequency"]'
+        );
+        const weeklyBlock = document.getElementById("weekly-days");
+        const monthlyBlock = document.getElementById("monthly-options");
+        const monthlyDay = document.getElementById("monthlyDay");
+        const monthlyError = document.getElementById("monthly-error");
 
-            function updateFrequencyBlocks() {
-                const v = freqSelect.value;
-                if (weeklyBlock) weeklyBlock.style.display = v === 'weekly' ? 'block' : 'none';
-                if (monthlyBlock) monthlyBlock.style.display = v === 'monthly' ? 'block' : 'none';
-                updateMonthlyFieldState();
-            }
+        if (!freqSelect) return;
 
-            // Enable or disable monthlyDay depending on whether monthly options are visible
-            function updateMonthlyFieldState() {
-                if (!monthlyDay) return;
-                const visible = monthlyBlock && monthlyBlock.style.display === 'block';
-                monthlyDay.disabled = !visible;
-                if (!visible) monthlyError.style.display = 'none';
-            }
+        function updateFrequencyBlocks() {
+          const v = freqSelect.value;
+          if (v === "weekly") {
+            weeklyBlock.classList.remove("hidden");
+            monthlyBlock.classList.add("hidden");
+          } else if (v === "monthly") {
+            monthlyBlock.classList.remove("hidden");
+            weeklyBlock.classList.add("hidden");
+          } else {
+            weeklyBlock.classList.add("hidden");
+            monthlyBlock.classList.add("hidden");
+          }
+          updateMonthlyFieldState();
+        }
 
-            // Ensure monthlyDay contains only digits and is in range 1-31
-            function validateMonthlyDay() {
-                if (!monthlyDay) return true;
-                const raw = monthlyDay.value.toString();
-                const digits = raw.replace(/[^0-9]/g, '');
-                if (digits !== raw) monthlyDay.value = digits;
-                if (digits === '') {
-                    monthlyError.style.display = 'block';
-                    monthlyError.textContent = 'Enter a number between 1 and 31.';
-                    return false;
-                }
-                const n = parseInt(digits, 10);
-                if (isNaN(n) || n < 1 || n > 31) {
-                    monthlyError.style.display = 'block';
-                    monthlyError.textContent = 'Enter a number between 1 and 31.';
-                    return false;
-                }
-                monthlyError.style.display = 'none';
-                return true;
-            }
+        function updateMonthlyFieldState() {
+          if (!monthlyDay) return;
+          const visible = !monthlyBlock.classList.contains("hidden");
+          monthlyDay.disabled = !visible;
+          if (!visible) monthlyError.classList.add("hidden");
+        }
 
-            freqSelect.addEventListener('change', updateFrequencyBlocks);
-            updateFrequencyBlocks();
+        function validateMonthlyDay() {
+          if (!monthlyDay) return true;
+          const raw = monthlyDay.value.toString();
+          const digits = raw.replace(/[^0-9]/g, "");
+          if (digits !== raw) monthlyDay.value = digits;
 
-            if (monthlyDay) {
-                monthlyDay.addEventListener('input', validateMonthlyDay);
-                monthlyDay.addEventListener('blur', validateMonthlyDay);
-            }
-        });
+          if (digits === "") {
+            monthlyError.classList.remove("hidden");
+            monthlyError.textContent = "Enter a number between 1 and 31.";
+            return false;
+          }
+
+          const n = parseInt(digits, 10);
+          if (isNaN(n) || n < 1 || n > 31) {
+            monthlyError.classList.remove("hidden");
+            monthlyError.textContent = "Enter a number between 1 and 31.";
+            return false;
+          }
+
+          monthlyError.classList.add("hidden");
+          return true;
+        }
+
+        freqSelect.addEventListener("change", updateFrequencyBlocks);
+        updateFrequencyBlocks();
+
+        if (monthlyDay) {
+          monthlyDay.addEventListener("input", validateMonthlyDay);
+          monthlyDay.addEventListener("blur", validateMonthlyDay);
+        }
+      });
     </script>
-</body>
+  </body>
 </html>
