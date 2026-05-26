@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Add Habit</h1>
+
+    <form action="/add-habit" method="POST">
+
+        <div>
+            <label>Habit Name:</label>
+            <input type="text" name="habitName">
+        </div>
+
+        <div>
+            <label>Habit Category:</label>
+            <select name="habitCategory">
+                <option value="health">Health</option>
+                <option value="productivity">Productivity</option>
+                <option value="learning">Learning</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Habit Description:</label>
+            <textarea name="habitDescription"></textarea>
+        </div>
+        
+        <div>
+            <label>Habit Frequency:</label>
+            <select name="habitFrequency">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+            </select>
+        </div>
+
+        <!-- Weekly days: shown only when Frequency is set to "weekly" -->
+        <div id="weekly-days" style="display:none; margin-top:12px;">
+            <label style="font-weight:700; display:block; margin-bottom:6px;">Weekly Days:</label>
+            <div>
+                <label><input type="checkbox" name="weeklyDays" value="monday"> Monday</label>
+                <label style="margin-left:12px;"><input type="checkbox" name="weeklyDays" value="tuesday"> Tuesday</label>
+                <label style="margin-left:12px;"><input type="checkbox" name="weeklyDays" value="wednesday"> Wednesday</label>
+                <label style="margin-left:12px;"><input type="checkbox" name="weeklyDays" value="thursday"> Thursday</label>
+                <label style="margin-left:12px;"><input type="checkbox" name="weeklyDays" value="friday"> Friday</label>
+                <label style="margin-left:12px;"><input type="checkbox" name="weeklyDays" value="saturday"> Saturday</label>
+                <label style="margin-left:12px;"><input type="checkbox" name="weeklyDays" value="sunday"> Sunday</label>
+            </div>
+        </div>
+
+        <!-- Monthly options: shown only when Frequency is set to "monthly" -->
+        <div id="monthly-options" style="display:none; margin-top:12px;">
+            <label style="font-weight:700; display:block; margin-bottom:6px;">Day of month</label>
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <input id="monthlyDay" type="number" name="monthlyDay" min="1" max="31" value="1" inputmode="numeric" pattern="\d*" style="width:80px;">
+            </div>
+            <div id="monthly-error" style="margin-top:8px; color:#b91c1c; font-size:13px; display:none;">Enter a number between 1 and 31.</div>
+            <div style="margin-top:8px; color:#6b7280; font-size:13px;">Enter the day of month (1-31). Invalid dates (e.g., 31 on short months) should be handled server-side.</div>
+        </div>
+        
+        <div>
+            <input type="submit" value="Add Habit">
+        </div>
+
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const freqSelect = document.querySelector('select[name="habitFrequency"]');
+            const weeklyBlock = document.getElementById('weekly-days');
+            const monthlyBlock = document.getElementById('monthly-options');
+            const monthlyDay = document.getElementById('monthlyDay');
+            const monthlyError = document.getElementById('monthly-error');
+            if (!freqSelect) return;
+
+            function updateFrequencyBlocks() {
+                const v = freqSelect.value;
+                if (weeklyBlock) weeklyBlock.style.display = v === 'weekly' ? 'block' : 'none';
+                if (monthlyBlock) monthlyBlock.style.display = v === 'monthly' ? 'block' : 'none';
+                updateMonthlyFieldState();
+            }
+
+            // Enable or disable monthlyDay depending on whether monthly options are visible
+            function updateMonthlyFieldState() {
+                if (!monthlyDay) return;
+                const visible = monthlyBlock && monthlyBlock.style.display === 'block';
+                monthlyDay.disabled = !visible;
+                if (!visible) monthlyError.style.display = 'none';
+            }
+
+            // Ensure monthlyDay contains only digits and is in range 1-31
+            function validateMonthlyDay() {
+                if (!monthlyDay) return true;
+                const raw = monthlyDay.value.toString();
+                const digits = raw.replace(/[^0-9]/g, '');
+                if (digits !== raw) monthlyDay.value = digits;
+                if (digits === '') {
+                    monthlyError.style.display = 'block';
+                    monthlyError.textContent = 'Enter a number between 1 and 31.';
+                    return false;
+                }
+                const n = parseInt(digits, 10);
+                if (isNaN(n) || n < 1 || n > 31) {
+                    monthlyError.style.display = 'block';
+                    monthlyError.textContent = 'Enter a number between 1 and 31.';
+                    return false;
+                }
+                monthlyError.style.display = 'none';
+                return true;
+            }
+
+            freqSelect.addEventListener('change', updateFrequencyBlocks);
+            updateFrequencyBlocks();
+
+            if (monthlyDay) {
+                monthlyDay.addEventListener('input', validateMonthlyDay);
+                monthlyDay.addEventListener('blur', validateMonthlyDay);
+            }
+        });
+    </script>
+</body>
+</html>
