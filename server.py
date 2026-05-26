@@ -3,6 +3,7 @@ app = Flask(__name__)
 app.secret_key = "HabitUpKey"
 
 from models.user import User
+from models.habit import Habit
 
 @app.route('/')
 def index():
@@ -22,9 +23,44 @@ def loginProcess():
     if user:
         session["user_id"] = user.id
         session["username"] = user.username
-        return render_template("dashboard.html")
+        return render_template("dashboardSample.html")
     else:
         return render_template("login.html", error="Invalid credentials")
+    
+@app.route("/add-habit", methods=["POST", "GET"])
+def addHabit():
+    if request.method == "GET":
+        return render_template("addHabitSample.html")
+    if "user_id" not in session:
+        return render_template("login.html", error="Please log in to add a habit")
+    else:
+        user_id = session["user_id"]
+    
+    habitFrequency = request.form.get("habitFrequency")
+    weekly_days = request.form.getlist("weeklyDays")
+    monthly_day = request.form.get("monthlyDay")
+    
+    weekly_days = None
+    monthly_day = None
+
+
+    if habitFrequency == "weekly":
+        weekly_days = ",".join(request.form.getlist("weeklyDays")) or None
+    elif habitFrequency == "monthly":
+        monthly_day = request.form.get("monthlyDay") or None
+
+    habit_data = {
+        "userId": user_id,
+        "habitName": request.form.get("habitName"),
+        "habitCategory": request.form.get("habitCategory"),
+        "habitDescription": request.form.get("habitDescription"),
+        "habitFrequency": habitFrequency,
+        "habitWeekly": weekly_days,
+        "habitMonthly": monthly_day,
+    }
+
+    Habit.insertHabit(habit_data)
+    return render_template("dashboardSample.html")
 
 @app.route("/signup")
 def signupPage():
