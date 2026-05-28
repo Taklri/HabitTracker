@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Habit - HabitUp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white"
+  >
+    <nav
+      class="bg-slate-800/95 backdrop-blur border-b border-slate-700 shadow-md"
+    >
+      <div
+        class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center"
+      >
+        <h1 class="text-2xl font-bold text-emerald-400">HabitUp</h1>
+        <a
+          href="/dashboard"
+          class="text-slate-300 hover:text-slate-100 transition"
+          >← Back</a
+        >
+      </div>
+    </nav>
+
+    <main class="max-w-2xl mx-auto px-4 py-8">
+      <div
+        class="rounded-3xl border border-slate-700 bg-slate-800/95 p-8 shadow-lg shadow-slate-900/50 backdrop-blur"
+      >
+        <h2 class="text-3xl font-bold text-slate-100 mb-2">Edit Habit</h2>
+        <p class="text-slate-400 mb-8">
+          Update your habit details and keep your tracking in sync
+        </p>
+
+        <form action="/edit-habit/{{ habit.id }}" method="POST" class="space-y-6">
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 mb-2"
+              >Habit Name</label
+            >
+            <input
+              type="text"
+              name="habitName"
+              value="{{ habit.habitName }}"
+              required
+              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 mb-2"
+              >Category</label
+            >
+            <select
+              name="habitCategory"
+              required
+              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
+            >
+              <option value="" {% if not habit.habitCategory %}selected{% endif %}>
+                Select a category
+              </option>
+              <option value="health" {% if habit.habitCategory == 'health' %}selected{% endif %}>
+                Health
+              </option>
+              <option value="productivity" {% if habit.habitCategory == 'productivity' %}selected{% endif %}>
+                Productivity
+              </option>
+              <option value="learning" {% if habit.habitCategory == 'learning' %}selected{% endif %}>
+                Learning
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 mb-2"
+              >Description</label
+            >
+            <textarea
+              name="habitDescription"
+              rows="4"
+              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
+            >{{ habit.habitDescription }}</textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-300 mb-2"
+              >Frequency</label
+            >
+            <select
+              name="habitFrequency"
+              required
+              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
+            >
+              <option value="daily" {% if habit.habitFrequency == 'daily' %}selected{% endif %}>
+                Daily
+              </option>
+              <option value="weekly" {% if habit.habitFrequency == 'weekly' %}selected{% endif %}>
+                Weekly
+              </option>
+              <option value="monthly" {% if habit.habitFrequency == 'monthly' %}selected{% endif %}>
+                Monthly
+              </option>
+            </select>
+          </div>
+
+          <div id="weekly-days" class="hidden">
+            <label class="block text-sm font-semibold text-slate-300 mb-3"
+              >Select Days</label
+            >
+            <div class="grid grid-cols-2 gap-3">
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="weeklyDays"
+                  value="monday"
+                  {% if habit.habitWeekly and 'monday' in habit.habitWeekly %}checked{% endif %}
+                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
+                />
+                <span class="text-slate-300">Monday</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="weeklyDays"
+                  value="tuesday"
+                  {% if habit.habitWeekly and 'tuesday' in habit.habitWeekly %}checked{% endif %}
+                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
+                />
+                <span class="text-slate-300">Tuesday</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="weeklyDays"
+                  value="wednesday"
+                  {% if habit.habitWeekly and 'wednesday' in habit.habitWeekly %}checked{% endif %}
+                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
+                />
+                <span class="text-slate-300">Wednesday</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="weeklyDays"
+                  value="thursday"
+                  {% if habit.habitWeekly and 'thursday' in habit.habitWeekly %}checked{% endif %}
+                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
+                />
+                <span class="text-slate-300">Thursday</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="weeklyDays"
+                  value="friday"
+                  {% if habit.habitWeekly and 'friday' in habit.habitWeekly %}checked{% endif %}
+                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
+                />
+                <span class="text-slate-300">Friday</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="weeklyDays"
+                  value="saturday"
+                  {% if habit.habitWeekly and 'saturday' in habit.habitWeekly %}checked{% endif %}
+                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
+                />
+                <span class="text-slate-300">Saturday</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="weeklyDays"
+                  value="sunday"
+                  {% if habit.habitWeekly and 'sunday' in habit.habitWeekly %}checked{% endif %}
+                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
+                />
+                <span class="text-slate-300">Sunday</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="monthly-options" class="hidden">
+            <label class="block text-sm font-semibold text-slate-300 mb-2"
+              >Day of Month</label
+            >
+            <input
+              id="monthlyDay"
+              type="number"
+              name="monthlyDay"
+              min="1"
+              max="31"
+              value="{{ habit.habitMonthly or 1 }}"
+              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
+            />
+            <div id="monthly-error" class="hidden mt-2 text-sm text-red-400">
+              Enter a number between 1 and 31.
+            </div>
+            <p class="text-sm text-slate-400 mt-2">
+              Enter the day of month (1-31)
+            </p>
+          </div>
+
+          <div class="flex gap-3 pt-4">
+            <button
+              type="submit"
+              class="flex-1 bg-emerald-700 text-white px-6 py-3 rounded-xl hover:bg-emerald-800 font-semibold transition"
+            >
+              Update Habit
+            </button>
+            <a
+              href="/dashboard"
+              class="flex-1 bg-slate-700 text-slate-200 px-6 py-3 rounded-xl hover:bg-slate-600 font-semibold transition text-center"
+            >
+              Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const freqSelect = document.querySelector('select[name="habitFrequency"]');
+        const weeklyBlock = document.getElementById("weekly-days");
+        const monthlyBlock = document.getElementById("monthly-options");
+        const monthlyDay = document.getElementById("monthlyDay");
+        const monthlyError = document.getElementById("monthly-error");
+
+        if (!freqSelect) return;
+
+        function updateFrequencyBlocks() {
+          const value = freqSelect.value;
+          if (value === "weekly") {
+            weeklyBlock.classList.remove("hidden");
+            monthlyBlock.classList.add("hidden");
+          } else if (value === "monthly") {
+            monthlyBlock.classList.remove("hidden");
+            weeklyBlock.classList.add("hidden");
+          } else {
+            weeklyBlock.classList.add("hidden");
+            monthlyBlock.classList.add("hidden");
+          }
+          updateMonthlyFieldState();
+        }
+
+        function updateMonthlyFieldState() {
+          if (!monthlyDay) return;
+          const visible = !monthlyBlock.classList.contains("hidden");
+          monthlyDay.disabled = !visible;
+          if (!visible) monthlyError.classList.add("hidden");
+        }
+
+        function validateMonthlyDay() {
+          if (!monthlyDay) return true;
+          const raw = monthlyDay.value.toString();
+          const digits = raw.replace(/[^0-9]/g, "");
+          if (digits !== raw) monthlyDay.value = digits;
+
+          if (digits === "") {
+            monthlyError.classList.remove("hidden");
+            monthlyError.textContent = "Enter a number between 1 and 31.";
+            return false;
+          }
+
+          const numberValue = parseInt(digits, 10);
+          if (isNaN(numberValue) || numberValue < 1 || numberValue > 31) {
+            monthlyError.classList.remove("hidden");
+            monthlyError.textContent = "Enter a number between 1 and 31.";
+            return false;
+          }
+
+          monthlyError.classList.add("hidden");
+          return true;
+        }
+
+        freqSelect.addEventListener("change", updateFrequencyBlocks);
+        updateFrequencyBlocks();
+
+        if (monthlyDay) {
+          monthlyDay.addEventListener("input", validateMonthlyDay);
+          monthlyDay.addEventListener("blur", validateMonthlyDay);
+        }
+      });
+    </script>
+  </body>
+</html>

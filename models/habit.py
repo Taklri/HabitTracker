@@ -18,3 +18,35 @@ class Habit:
         query = """INSERT INTO habit (userId, habitName, habitCategory, habitDescription, habitFrequency, habitWeekly, habitMonthly) 
         VALUES (%(userId)s, %(habitName)s, %(habitCategory)s, %(habitDescription)s, %(habitFrequency)s, %(habitWeekly)s, %(habitMonthly)s);"""
         return MysqlConnection("habitUp").query_start(query, data)
+    
+    @classmethod
+    def getHabitsByUser(cls, user_id):
+        query = """SELECT * FROM habit WHERE userId = %(userId)s;"""
+        result = MysqlConnection("habitUp").query_start(query, {"userId": user_id})
+        habits = []
+        if len(result) > 0:
+            for row in result:
+                habits.append(cls(row))
+        return habits
+
+    @classmethod
+    def getHabitById(cls, habit_id):
+        query = """SELECT * FROM habit WHERE id = %(id)s;"""
+        result = MysqlConnection("habitUp").query_start(query, {"id": habit_id})
+        if len(result) > 0:
+            return cls(result[0])
+        return None
+
+    @classmethod
+    def deleteHabit(cls, habit_id):
+        query = """DELETE FROM habit WHERE id = %(id)s;"""
+        return MysqlConnection("habitUp").query_start(query, {"id": habit_id})
+    
+    @classmethod
+    def editHabit(cls, data):
+        query = """UPDATE habit SET habitName = %(habitName)s, habitCategory = %(habitCategory)s, habitDescription = %(habitDescription)s, habitFrequency = %(habitFrequency)s, habitWeekly = %(habitWeekly)s, habitMonthly = %(habitMonthly)s WHERE id = %(id)s;"""
+        return MysqlConnection("habitUp").query_start(query, data)
+
+    @classmethod
+    def updateHabit(cls, data):
+        return cls.editHabit(data)

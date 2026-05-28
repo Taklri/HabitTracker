@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, session
+from flask import Flask, url_for, request, render_template, session, redirect
 app = Flask(__name__)
 app.secret_key = "HabitUpKey"
 
@@ -23,7 +23,7 @@ def loginProcess():
     if user:
         session["user_id"] = user.id
         session["username"] = user.username
-        return render_template("dashboardSample.html")
+        return redirect(url_for('dashboard'))
     else:
         return render_template("login.html", error="Invalid credentials")
     
@@ -78,6 +78,58 @@ def signupProcess():
     else:
         User.insertUser(newUser)
     return render_template("login.html")
+
+# here yung added para makita sa dashboard and delete
+@app.route("/dashboard")
+def dashboard():
+    if "user_id" not in session:
+        return redirect("/login")
     
+    user_id = session["user_id"]
+    habits = Habit.getHabitsByUser(user_id)
+    return render_template("dashboardSample.html", username=session["username"], habits=habits)
+
+@app.route("/delete-habit/<int:habit_id>", methods=["POST"])
+def deleteHabit(habit_id):
+    if "user_id" not in session:
+        return redirect("/login")
+    
+    Habit.deleteHabit(habit_id)
+    return redirect("/dashboard")
+
+@app.route("/edit-habit/<int:habit_id>", methods=["GET", "POST"])
+def editHabit(habit_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    if request.method == "GET":
+        habit = Habit.getHabitById(habit_id)
+        if not habit:
+            return redirect("/dashboard")
+        return render_template("editPageSample.html", habit=habit)
+
+    habitFrequency = request.form.get("habitFrequency")
+    weekly_days = None
+    monthly_day = None
+
+    if habitFrequency == "weekly":
+        weekly_days = ",".join(request.form.getlist("weeklyDays")) or None
+    elif habitFrequency == "monthly":
+        monthly_day = request.form.get("monthlyDay") or None
+
+    habit_data = {
+        "id": habit_id,
+        "userId": session["user_id"],
+        "habitName": request.form.get("habitName"),
+        "habitCategory": request.form.get("habitCategory"),
+        "habitDescription": request.form.get("habitDescription"),
+        "habitFrequency": habitFrequency,
+        "habitWeekly": weekly_days,
+        "habitMonthly": monthly_day,
+    }
+
+    Habit.updateHabit(habit_data)
+    return redirect("/dashboard")
+
 if __name__ == "__main__":
     app.run(debug=True)
