@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitUp - Edit Goal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+    <!-- Header -->
+    <nav class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-700/50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-emerald-500 bg-clip-text text-transparent">HabitUp</h1>
+            <a 
+              href="/dashboard"
+              class="text-slate-400 hover:text-slate-300 transition flex items-center gap-2 text-sm font-semibold"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+              Back
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-2xl mx-auto px-6 py-12">
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-slate-100 mb-2">Edit Goal</h1>
+            <p class="text-slate-400">Update your goal details and track progress</p>
+        </div>
+
+        <form action="/edit-goal/{{ goal.id }}" method="POST" class="space-y-6">
+            <!-- Goal Name -->
+            <div class="group">
+                <label class="block text-sm font-semibold text-slate-300 mb-2">Goal Name <span class="text-blue-400">*</span></label>
+                <input
+                    type="text"
+                    name="goalName"
+                    value="{{ goal.goalName }}"
+                    required
+                    class="w-full rounded-xl border border-slate-600/50 bg-slate-800/50 backdrop-blur px-4 py-3 text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 hover:border-slate-500"
+                />
+                <p class="text-xs text-slate-500 mt-1.5">Update your goal name if needed</p>
+            </div>
+
+            <!-- Goal Description -->
+            <div class="group">
+                <label class="block text-sm font-semibold text-slate-300 mb-2">Description</label>
+                <textarea
+                    name="goalDescription"
+                    rows="4"
+                    class="w-full rounded-xl border border-slate-600/50 bg-slate-800/50 backdrop-blur px-4 py-3 text-white placeholder-slate-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 hover:border-slate-500 resize-none"
+                >{{ goal.goalDescription }}</textarea>
+                <p class="text-xs text-slate-500 mt-1.5">Update your goal description</p>
+            </div>
+
+            <!-- Category -->
+            <div class="group">
+                <label class="block text-sm font-semibold text-slate-300 mb-2">Category <span class="text-blue-400">*</span></label>
+                <select
+                    name="goalCategory"
+                    required
+                    class="w-full rounded-xl border border-slate-600/50 bg-slate-800/50 backdrop-blur px-4 py-3 text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 hover:border-slate-500"
+                >
+                    <option value="health" {% if goal.goalCategory == 'health' %}selected{% endif %}>Health</option>
+                    <option value="productivity" {% if goal.goalCategory == 'productivity' %}selected{% endif %}>Productivity</option>
+                    <option value="finance" {% if goal.goalCategory == 'finance' %}selected{% endif %}>Finance</option>
+                    <option value="learning" {% if goal.goalCategory == 'learning' %}selected{% endif %}>Learning</option>
+                    <option value="fitness" {% if goal.goalCategory == 'fitness' %}selected{% endif %}>Fitness</option>
+                    <option value="personal" {% if goal.goalCategory == 'personal' %}selected{% endif %}>Personal</option>
+                </select>
+            </div>
+
+            <!-- Target Date -->
+            <div class="group">
+                <label class="block text-sm font-semibold text-slate-300 mb-2">Target Date <span class="text-blue-400">*</span></label>
+                <input
+                    type="date"
+                    name="targetDate"
+                    value="{{ goal.targetDate }}"
+                    required
+                    class="w-full rounded-xl border border-slate-600/50 bg-slate-800/50 backdrop-blur px-4 py-3 text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 hover:border-slate-500"
+                />
+            </div>
+
+            <!-- Status -->
+            <div class="group">
+                <label class="block text-sm font-semibold text-slate-300 mb-2">Status <span class="text-blue-400">*</span></label>
+                <select
+                    name="goalStatus"
+                    required
+                    class="w-full rounded-xl border border-slate-600/50 bg-slate-800/50 backdrop-blur px-4 py-3 text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 hover:border-slate-500"
+                >
+                    <option value="not started" {% if goal.goalStatus == 'not started' %}selected{% endif %}>Not Started</option>
+                    <option value="in progress" {% if goal.goalStatus == 'in progress' %}selected{% endif %}>In Progress</option>
+                    <option value="completed" {% if goal.goalStatus == 'completed' %}selected{% endif %}>Completed</option>
+                </select>
+                <p class="text-xs text-slate-500 mt-1.5">Track where you are in achieving this goal</p>
+            </div>
+
+            <!-- Progress -->
+            <div class="group">
+                <label class="block text-sm font-semibold text-slate-300 mb-2">Progress <span class="text-blue-400">{{ goal.progress }}%</span></label>
+                <div class="flex items-center gap-4">
+                    <input
+                        type="range"
+                        name="progress"
+                        value="{{ goal.progress }}"
+                        min="0"
+                        max="100"
+                        class="flex-1 h-2 rounded-full bg-slate-700/50 appearance-none cursor-pointer accent-blue-500"
+                    />
+                    <input
+                        type="number"
+                        value="{{ goal.progress }}"
+                        min="0"
+                        max="100"
+                        readonly
+                        class="w-16 rounded-lg border border-slate-600/50 bg-slate-800/50 px-3 py-2 text-center text-white text-sm"
+                    />
+                </div>
+                <p class="text-xs text-slate-500 mt-1.5">Update your progress towards this goal</p>
+            </div>
+
+            <!-- Current Progress Bar -->
+            <div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+                <p class="text-xs text-slate-400 mb-2">Current Progress</p>
+                <div class="w-full bg-slate-700/50 rounded-full h-3">
+                    <div 
+                        class="bg-gradient-to-r from-blue-500 to-blue-400 h-3 rounded-full transition-all duration-300" 
+                        style="width: {{ goal.progress }}%"
+                    ></div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-3 pt-6 border-t border-slate-700/50">
+                <button
+                    type="submit"
+                    class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 font-semibold transition duration-200 shadow-lg hover:shadow-xl hover:shadow-blue-500/20"
+                >
+                    Update Goal
+                </button>
+                <a href="/dashboard" class="flex-1 bg-slate-700/50 text-slate-200 px-6 py-3 rounded-xl hover:bg-slate-600/50 font-semibold transition duration-200 text-center border border-slate-600/50">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const rangeInput = document.querySelector('input[type="range"]');
+            const numberInput = document.querySelector('input[type="number"]');
+            
+            if (rangeInput && numberInput) {
+                rangeInput.addEventListener('input', function() {
+                    numberInput.value = this.value;
+                });
+                
+                numberInput.addEventListener('input', function() {
+                    rangeInput.value = this.value;
+                });
+            }
+        });
+    </script>
+</body>
+</html>
