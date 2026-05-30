@@ -1,4 +1,4 @@
-from flask import Flask, url_for, request, render_template, session, redirect
+from flask import Flask, url_for, request, render_template, session, redirect, flash
 app = Flask(__name__)
 app.secret_key = "HabitUpKey"
 
@@ -27,8 +27,12 @@ def loginProcess():
     else:
         return render_template("login.html", error="Invalid credentials")
     
-@app.route("/add-habit", methods=["POST", "GET"])
+@app.route("/add-habit")
 def addHabit():
+    return render_template("addHabitSample.html")
+
+@app.route("/add-habit/process", methods=["POST"])
+def addHabitProcess():
     if request.method == "GET":
         return render_template("addHabitSample.html")
     if "user_id" not in session:
@@ -60,7 +64,7 @@ def addHabit():
     }
 
     Habit.insertHabit(habit_data)
-    return render_template("dashboardSample.html")
+    return redirect("/dashboard")
 
 @app.route("/signup")
 def signupPage():
@@ -86,8 +90,19 @@ def dashboard():
         return redirect("/login")
     
     user_id = session["user_id"]
-    habits = Habit.getHabitsByUser(user_id)
-    return render_template("dashboardSample.html", username=session["username"], habits=habits)
+    selected_category = request.args.get("category", "all")
+
+    if selected_category and selected_category != "all":
+        habits = Habit.filterHabitsByCategory(user_id, selected_category)
+    else:
+        habits = Habit.getHabitsByUser(user_id)
+
+    return render_template(
+        "dashboardSample.html",
+        username=session["username"],
+        habits=habits,
+        selected_category=selected_category,
+    )
 
 @app.route("/delete-habit/<int:habit_id>", methods=["POST"])
 def deleteHabit(habit_id):

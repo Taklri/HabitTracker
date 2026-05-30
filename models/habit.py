@@ -50,3 +50,13 @@ class Habit:
     @classmethod
     def updateHabit(cls, data):
         return cls.editHabit(data)
+    
+    @classmethod
+    def filterHabitsByCategory(cls, user_id, category):
+        query = """SELECT * FROM habit WHERE userId = %(userId)s AND habitCategory = %(category)s;"""
+        result = MysqlConnection("habitUp").query_start(query, {"userId": user_id, "category": category})
+        habits = []
+        if len(result) > 0:
+            for row in result:
+                habits.append(cls(row))
+        return habits

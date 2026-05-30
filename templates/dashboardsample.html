@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>HabitUp - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      function confirmDeletion() {
+        return confirm("Are you sure you want to delete thiJs habit?");
+      }
+    </script>
   </head>
   <body
     class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white"
@@ -37,12 +42,38 @@
     <main class="max-w-6xl mx-auto px-4 py-8">
       <!-- Add Habit Button -->
       <div class="mb-8">
-        <a
-          href="/add-habit"
-          class="bg-emerald-700 text-white px-6 py-3 rounded-xl hover:bg-emerald-800 font-semibold transition inline-block"
-        >
-          + Add Habit
-        </a>
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <a
+            href="/add-habit"
+            class="bg-emerald-700 text-white px-6 py-3 rounded-xl hover:bg-emerald-800 font-semibold transition inline-block text-center"
+          >
+            + Add Habit
+          </a>
+
+          <form action="/dashboard" method="GET" class="sm:min-w-72">
+            <label class="block text-sm font-semibold text-slate-300 mb-2">
+              Filter by Category
+            </label>
+            <select
+              name="category"
+              onchange="this.form.submit()"
+              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
+            >
+              <option value="all" {% if selected_category == 'all' %}selected{% endif %}>
+                All Categories
+              </option>
+              <option value="health" {% if selected_category == 'health' %}selected{% endif %}>
+                Health
+              </option>
+              <option value="productivity" {% if selected_category == 'productivity' %}selected{% endif %}>
+                Productivity
+              </option>
+              <option value="learning" {% if selected_category == 'learning' %}selected{% endif %}>
+                Learning
+              </option>
+            </select>
+          </form>
+        </div>
       </div>
 
       <!-- Habits List -->
@@ -79,6 +110,7 @@
                 action="/delete-habit/{{ habit.id }}"
                 method="POST"
                 class="flex-1"
+                onsubmit="return confirmDeletion()"
               >
                 <button
                   type="submit"
