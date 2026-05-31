@@ -1,12 +1,29 @@
 from datetime import date
+import os
 
-from flask import Flask, url_for, request, render_template, session, redirect, flash
+from flask import Flask, url_for, request, render_template, session, redirect, flash, send_from_directory
 app = Flask(__name__)
 app.secret_key = "HabitUpKey"
 
 from models.user import User
 from models.habit import Habit
 from models.goal import Goal
+
+AVATAR_FOLDER = os.path.join(app.root_path, "avatars")
+
+
+def _allowed_avatars():
+    return sorted(User.ALLOWED_AVATARS)
+
+
+def _sanitize_avatar(value):
+    return User.normalizeAvatar(value)
+
+
+@app.route("/avatars/<avatar_name>.png")
+def serveAvatar(avatar_name):
+    avatar = _sanitize_avatar(avatar_name)
+    return send_from_directory(AVATAR_FOLDER, f"{avatar}.png")
 
 @app.route('/')
 def index():
@@ -26,26 +43,97 @@ def loginProcess():
     if user:
         session["user_id"] = user.id
         session["username"] = user.username
+        session["avatar"] = _sanitize_avatar(user.avatar)
         return redirect(url_for('dashboard'))
     else:
         return render_template("login.html", error="Invalid credentials")
     
 @app.route("/signup")
 def signupPage():
-    return render_template("signup.html")
+    return render_template(
+        "signup.html",
+        allowed_avatars=_allowed_avatars(),
+        default_avatar=User.DEFAULT_AVATAR,
+    )
 
 @app.route("/signup/process", methods=["POST"])
 def signupProcess():
     newUser={
         "username": request.form["username"],
         "password": request.form["password"],
-        "reenterpass": request.form["reenterpass"]
+        "reenterpass": request.form["reenterpass"],
+        "avatar": _sanitize_avatar(request.form.get("avatar")),
     }
     if newUser["password"] != newUser["reenterpass"]:
-        return "Passwords do not match"
+        return render_template(
+            "signup.html",
+            error="Passwords do not match",
+            allowed_avatars=_allowed_avatars(),
+            default_avatar=newUser["avatar"],
+        )
     else:
         User.insertUser(newUser)
     return render_template("login.html")
+
+
+@app.route("/profile")
+def profilePage():
+    if "user_id" not in session:
+        return redirect("/login")
+
+    user = User.getUserById({"id": session["user_id"]})
+    if not user:
+        return redirect("/login")
+
+    return render_template(
+        "profile.html",
+        username=user.username,
+        selected_avatar=_sanitize_avatar(user.avatar),
+        allowed_avatars=_allowed_avatars(),
+    )
+
+
+@app.route("/profile/process", methods=["POST"])
+def profileProcess():
+    if "user_id" not in session:
+        return redirect("/login")
+
+    username = request.form.get("username", "").strip()
+    new_password = request.form.get("password", "")
+    reenter_password = request.form.get("reenterpass", "")
+    avatar = _sanitize_avatar(request.form.get("avatar"))
+
+    if not username:
+        user = User.getUserById({"id": session["user_id"]})
+        return render_template(
+            "profile.html",
+            username=session.get("username"),
+            selected_avatar=avatar,
+            allowed_avatars=_allowed_avatars(),
+            error="Username cannot be blank",
+        )
+
+    if new_password and new_password != reenter_password:
+        user = User.getUserById({"id": session["user_id"]})
+        return render_template(
+            "profile.html",
+            username=username,
+            selected_avatar=avatar,
+            allowed_avatars=_allowed_avatars(),
+            error="Passwords do not match",
+        )
+
+    profile_data = {
+        "id": session["user_id"],
+        "username": username,
+        "avatar": avatar,
+        "password": new_password or None,
+    }
+
+    User.updateProfile(profile_data)
+    session["username"] = username
+    session["avatar"] = avatar
+    return redirect("/profile")
 
 
 def _parse_csv_values(value):
@@ -122,6 +210,7 @@ def dashboard():
     return render_template(
         "dashboardSample.html",
         username=session["username"],
+        avatar=_sanitize_avatar(session.get("avatar")),
         today=today,
         today_label=today.strftime("%A, %B %d, %Y"),
         habits=todays_habits,
