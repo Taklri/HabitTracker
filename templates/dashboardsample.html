@@ -7,34 +7,41 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              sans: ['DM Sans', 'sans-serif'],
-              mono: ['DM Mono', 'monospace'],
+              sans: ["DM Sans", "sans-serif"],
+              mono: ["DM Mono", "monospace"],
             },
             colors: {
               zinc: {
-                750: '#2d2d2d',
-                850: '#1f1f1f',
-                925: '#161616',
-              }
+                750: "#2d2d2d",
+                850: "#1f1f1f",
+                925: "#161616",
+              },
             },
             keyframes: {
               cardIn: {
-                '0%': { opacity: '0', transform: 'translateY(10px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' },
-              }
+                "0%": { opacity: "0", transform: "translateY(10px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
             },
             animation: {
-              'card-in': 'cardIn 0.3s ease forwards',
-            }
-          }
-        }
-      }
+              "card-in": "cardIn 0.3s ease forwards",
+            },
+          },
+        },
+      };
       function confirmDeletion() {
         return confirm("Delete this item?");
       }
@@ -44,36 +51,78 @@
       }
     </script>
     <style>
-      body { font-family: 'DM Sans', sans-serif; }
-      .card-delay-1 { animation-delay: 0.05s; opacity: 0; }
-      .card-delay-2 { animation-delay: 0.10s; opacity: 0; }
-      .card-delay-3 { animation-delay: 0.15s; opacity: 0; }
-      .card-delay-4 { animation-delay: 0.20s; opacity: 0; }
-      .card-delay-5 { animation-delay: 0.25s; opacity: 0; }
-      .card-delay-6 { animation-delay: 0.30s; opacity: 0; }
-      select option { background: #27272a; color: #f4f4f5; }
-      ::-webkit-scrollbar { width: 5px; }
-      ::-webkit-scrollbar-track { background: transparent; }
-      ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 999px; }
+      body {
+        font-family: "DM Sans", sans-serif;
+      }
+      .card-delay-1 {
+        animation-delay: 0.05s;
+        opacity: 0;
+      }
+      .card-delay-2 {
+        animation-delay: 0.1s;
+        opacity: 0;
+      }
+      .card-delay-3 {
+        animation-delay: 0.15s;
+        opacity: 0;
+      }
+      .card-delay-4 {
+        animation-delay: 0.2s;
+        opacity: 0;
+      }
+      .card-delay-5 {
+        animation-delay: 0.25s;
+        opacity: 0;
+      }
+      .card-delay-6 {
+        animation-delay: 0.3s;
+        opacity: 0;
+      }
+      select option {
+        background: #27272a;
+        color: #f4f4f5;
+      }
+      ::-webkit-scrollbar {
+        width: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #3f3f46;
+        border-radius: 999px;
+      }
     </style>
   </head>
 
-  <body class="min-h-screen bg-zinc-900 text-zinc-100" style="font-family:'DM Sans',sans-serif;">
-
+  <body
+    class="min-h-screen bg-zinc-900 text-zinc-100"
+    style="font-family: 'DM Sans', sans-serif"
+  >
     <!-- NAV -->
-    <nav class="sticky top-0 z-50 bg-zinc-900/90 backdrop-blur-xl border-b border-zinc-800">
-      <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <nav
+      class="sticky top-0 z-50 bg-zinc-900/90 backdrop-blur-xl border-b border-zinc-800"
+    >
+      <div
+        class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between"
+      >
         <!-- Logo -->
         <div class="flex items-center gap-2.5">
           <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span>
-          <span class="text-base font-semibold tracking-tight text-zinc-100">HabitUp</span>
+          <span class="text-base font-semibold tracking-tight text-zinc-100"
+            >HabitUp</span
+          >
         </div>
         <!-- Right -->
         <div class="flex items-center gap-4">
           <span class="text-sm text-zinc-400 font-mono hidden sm:block">
-            hey, <span class="text-emerald-400 font-medium">{{ username }}</span>
+            hey,
+            <span class="text-emerald-400 font-medium">{{ username }}</span>
           </span>
-          <a href="/" class="text-xs font-medium text-zinc-400 hover:text-zinc-200 border border-zinc-700 hover:border-zinc-600 px-4 py-1.5 rounded-lg transition-all duration-150">
+          <a
+            href="/"
+            class="text-xs font-medium text-zinc-400 hover:text-zinc-200 border border-zinc-700 hover:border-zinc-600 px-4 py-1.5 rounded-lg transition-all duration-150"
+          >
             Sign out
           </a>
         </div>
@@ -82,25 +131,43 @@
 
     <!-- MAIN -->
     <main class="max-w-6xl mx-auto px-6 py-10 sm:py-12">
-
       <!-- Today Header -->
-      <section class="mb-10 rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-850 via-zinc-900 to-zinc-950 p-6 sm:p-8 shadow-2xl shadow-black/20">
-        <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+      <section
+        class="mb-10 rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-850 via-zinc-900 to-zinc-950 p-6 sm:p-8 shadow-2xl shadow-black/20"
+      >
+        <div
+          class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between"
+        >
           <div>
             <div class="flex items-center gap-2.5 mb-3">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span>
-              <span class="text-xs font-medium tracking-[0.3em] uppercase text-zinc-500">Today</span>
+              <span
+                class="w-2 h-2 rounded-full bg-emerald-400 inline-block"
+              ></span>
+              <span
+                class="text-xs font-medium tracking-[0.3em] uppercase text-zinc-500"
+                >Today</span
+              >
             </div>
-            <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight text-zinc-50">{{ today_label }}</h1>
-            <p class="mt-2 text-sm text-zinc-500 max-w-xl">Only the habits and goals relevant for today are shown here.</p>
+            <h1
+              class="text-3xl sm:text-4xl font-semibold tracking-tight text-zinc-50"
+            >
+              {{ today_label }}
+            </h1>
+            <p class="mt-2 text-sm text-zinc-500 max-w-xl">
+              Only the habits and goals relevant for today are shown here.
+            </p>
           </div>
 
           <div class="flex items-center gap-3 text-xs font-mono text-zinc-400">
-            <span class="inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900/80 px-3 py-1.5">
+            <span
+              class="inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900/80 px-3 py-1.5"
+            >
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
               {{ habits|length }} habits
             </span>
-            <span class="inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900/80 px-3 py-1.5">
+            <span
+              class="inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900/80 px-3 py-1.5"
+            >
               <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
               {{ goals|length }} goals
             </span>
@@ -108,15 +175,41 @@
         </div>
 
         <div class="mt-6 flex flex-wrap gap-3">
-          <a href="/add-habit" class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-zinc-950 transition-all hover:-translate-y-0.5 hover:bg-emerald-400 shadow-lg shadow-emerald-500/20">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+          <a
+            href="/add-habit"
+            class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-zinc-950 transition-all hover:-translate-y-0.5 hover:bg-emerald-400 shadow-lg shadow-emerald-500/20"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4v16m8-8H4"
+              />
             </svg>
             New Habit
           </a>
-          <a href="/add-goal" class="inline-flex items-center gap-2 rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-blue-400 shadow-lg shadow-blue-500/20">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+          <a
+            href="/add-goal"
+            class="inline-flex items-center gap-2 rounded-xl bg-blue-500 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-blue-400 shadow-lg shadow-blue-500/20"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4v16m8-8H4"
+              />
             </svg>
             New Goal
           </a>
@@ -125,65 +218,122 @@
 
       <!-- ═══ HABITS SECTION ═══ -->
       <section class="mb-14">
-        <div class="flex items-center justify-between mb-5 pb-3 border-b border-zinc-800">
+        <div
+          class="flex items-center justify-between mb-5 pb-3 border-b border-zinc-800"
+        >
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold text-zinc-100 tracking-tight">Habits</h2>
+            <h2 class="text-lg font-semibold text-zinc-100 tracking-tight">
+              Habits
+            </h2>
             {% if habits %}
-            <span class="font-mono text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-md">{{ habits|length }}</span>
+            <span
+              class="font-mono text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-md"
+              >{{ habits|length }}</span
+            >
             {% endif %}
           </div>
           <div class="w-8 h-0.5 bg-emerald-500 rounded-full"></div>
         </div>
 
         <div class="space-y-3">
-          {% if habits %}
-            {% for habit in habits %}
-            <div class="animate-card-in card-delay-{{ loop.index }} rounded-2xl border border-zinc-700/60 bg-zinc-800/90 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-600 hover:shadow-xl hover:shadow-black/25">
-              <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <h3 class="text-sm font-semibold text-zinc-100 transition-colors group-hover:text-emerald-400">{{ habit.habitName }}</h3>
-                  {% if habit.habitDescription %}
-                  <p class="mt-1 text-sm leading-relaxed text-zinc-400">{{ habit.habitDescription }}</p>
-                  {% endif %}
-                </div>
-
-                <span class="inline-flex shrink-0 items-center rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-0.5 text-xs font-mono font-medium capitalize text-emerald-400">
-                  {{ habit.habitCategory }}
-                </span>
+          {% if habits %} {% for habit in habits %}
+          <div
+            class="animate-card-in card-delay-{{ loop.index }} rounded-2xl border border-zinc-700/60 bg-zinc-800/90 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-600 hover:shadow-xl hover:shadow-black/25"
+          >
+            <div
+              class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
+            >
+              <div>
+                <h3
+                  class="flex items-center text-sm font-semibold text-zinc-100 transition-colors group-hover:text-emerald-400"
+                >
+                  <span
+                    class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-emerald-500/20 mr-3 group-hover:bg-emerald-500/40 transition"
+                  >
+                    <i
+                      class="fa-solid {{ habit.habitIcon }} text-lg text-emerald-400"
+                    ></i>
+                  </span>
+                  {{ habit.habitName }}
+                </h3>
+                {% if habit.habitDescription %}
+                <p class="mt-1 text-sm leading-relaxed text-zinc-400">
+                  {{ habit.habitDescription }}
+                </p>
+                {% endif %}
               </div>
 
-              <div class="mt-4 flex flex-wrap items-center gap-2 text-xs">
-                <span class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1 text-zinc-400 capitalize">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  {{ habit.habitFrequency }}
-                </span>
-                <span class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1 text-zinc-400">
-                  <span class="w-1.5 h-1.5 rounded-full bg-zinc-500"></span>
-                  Today only
-                </span>
-              </div>
-
-              <div class="mt-4 flex gap-2 border-t border-zinc-700/50 pt-4">
-                <a href="/edit-habit/{{ habit.id }}" class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-700 hover:text-zinc-100">
-                  Edit
-                </a>
-                <form action="/delete-habit/{{ habit.id }}" method="POST" onsubmit="return confirmDeletion()">
-                  <button type="submit" class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-400 transition-all hover:border-red-500/30 hover:bg-red-500/15 hover:text-red-400">
-                    Delete
-                  </button>
-                </form>
-              </div>
+              <span
+                class="inline-flex shrink-0 items-center rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-0.5 text-xs font-mono font-medium capitalize text-emerald-400"
+              >
+                {{ habit.habitCategory }}
+              </span>
             </div>
-            {% endfor %}
-          {% else %}
-          <div class="py-14 text-center border border-dashed border-zinc-700 rounded-2xl bg-zinc-800/40">
-            <div class="w-10 h-10 mx-auto mb-4 rounded-xl border border-zinc-700 flex items-center justify-center bg-zinc-900/70">
-              <svg class="w-5 h-5 text-zinc-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+
+            <div class="mt-4 flex flex-wrap items-center gap-2 text-xs">
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1 text-zinc-400 capitalize"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                {{ habit.habitFrequency }}
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1 text-zinc-400"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-zinc-500"></span>
+                Today only
+              </span>
+            </div>
+
+            <div class="mt-4 flex gap-2 border-t border-zinc-700/50 pt-4">
+              <a
+                href="/edit-habit/{{ habit.id }}"
+                class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-700 hover:text-zinc-100"
+              >
+                Edit
+              </a>
+              <form
+                action="/delete-habit/{{ habit.id }}"
+                method="POST"
+                onsubmit="return confirmDeletion()"
+              >
+                <button
+                  type="submit"
+                  class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-400 transition-all hover:border-red-500/30 hover:bg-red-500/15 hover:text-red-400"
+                >
+                  Delete
+                </button>
+              </form>
+            </div>
+          </div>
+          {% endfor %} {% else %}
+          <div
+            class="py-14 text-center border border-dashed border-zinc-700 rounded-2xl bg-zinc-800/40"
+          >
+            <div
+              class="w-10 h-10 mx-auto mb-4 rounded-xl border border-zinc-700 flex items-center justify-center bg-zinc-900/70"
+            >
+              <svg
+                class="w-5 h-5 text-zinc-600"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 4v16m8-8H4"
+                />
               </svg>
             </div>
-            <p class="text-zinc-500 text-sm mb-3">No habits scheduled for today.</p>
-            <a href="/add-habit" class="text-emerald-400 hover:text-emerald-300 text-sm font-semibold transition-colors">
+            <p class="text-zinc-500 text-sm mb-3">
+              No habits scheduled for today.
+            </p>
+            <a
+              href="/add-habit"
+              class="text-emerald-400 hover:text-emerald-300 text-sm font-semibold transition-colors"
+            >
               Add a habit for today →
             </a>
           </div>
@@ -192,70 +342,135 @@
       </section>
 
       <!-- ═══ GOALS SECTION ═══ -->
-      <section>
-        <div class="flex items-center justify-between mb-5 pb-3 border-b border-zinc-800">
+      <section class="mb-14">
+        <div
+          class="flex items-center justify-between mb-5 pb-3 border-b border-zinc-800"
+        >
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold text-zinc-100 tracking-tight">Goals</h2>
+            <h2 class="text-lg font-semibold text-zinc-100 tracking-tight">
+              Goals
+            </h2>
             {% if goals %}
-            <span class="font-mono text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-md">{{ goals|length }}</span>
+            <span
+              class="font-mono text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-md"
+              >{{ goals|length }}</span
+            >
             {% endif %}
           </div>
           <div class="w-8 h-0.5 bg-blue-500 rounded-full"></div>
         </div>
 
         <div class="space-y-3">
-          {% if goals %}
-            {% for goal in goals %}
-            <div class="animate-card-in card-delay-{{ loop.index }} rounded-2xl border border-zinc-700/60 bg-zinc-800/90 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-600 hover:shadow-xl hover:shadow-black/25">
-              <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <h3 class="text-sm font-semibold text-zinc-100 transition-colors group-hover:text-blue-400">{{ goal.goalName }}</h3>
-                  {% if goal.goalDescription %}
-                  <p class="mt-1 text-sm leading-relaxed text-zinc-400">{{ goal.goalDescription }}</p>
-                  {% endif %}
-                </div>
-
-                <span class="inline-flex shrink-0 items-center rounded-full border border-blue-400/20 bg-blue-400/10 px-2.5 py-0.5 text-xs font-mono font-medium capitalize text-blue-400">
-                  {{ goal.goalCategory }}
-                </span>
+          {% if goals %} {% for goal in goals %}
+          <div
+            class="animate-card-in card-delay-{{ loop.index }} rounded-2xl border border-zinc-700/60 bg-zinc-800/90 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-600 hover:shadow-xl hover:shadow-black/25"
+          >
+            <div
+              class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
+            >
+              <div>
+                <h3
+                  class="flex items-center text-sm font-semibold text-zinc-100 transition-colors group-hover:text-blue-400"
+                >
+                  <span
+                    class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-500/20 mr-3 group-hover:bg-blue-500/40 transition"
+                  >
+                    <i
+                      class="fa-solid {{ goal.goalIcon }} text-lg text-blue-400"
+                    ></i>
+                  </span>
+                  {{ goal.goalName }}
+                </h3>
+                {% if goal.goalDescription %}
+                <p class="mt-1 text-sm leading-relaxed text-zinc-400">
+                  {{ goal.goalDescription }}
+                </p>
+                {% endif %}
               </div>
 
-              <div class="mt-4 flex flex-wrap items-center gap-2 text-xs">
-                <span class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1 text-zinc-400">
-                  <svg class="w-3.5 h-3.5 text-zinc-500" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                  </svg>
-                  {{ goal.targetDate }}
-                </span>
-                <span class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1 font-medium capitalize
-                  {% if goal.goalStatus == 'completed' %}text-emerald-400{% elif goal.goalStatus == 'in progress' %}text-amber-400{% else %}text-zinc-500{% endif %}">
-                  <span class="w-1.5 h-1.5 rounded-full
-                    {% if goal.goalStatus == 'completed' %}bg-emerald-400{% elif goal.goalStatus == 'in progress' %}bg-amber-400{% else %}bg-zinc-500{% endif %}"></span>
-                  {{ goal.goalStatus }}
-                </span>
-              </div>
-
-              <div class="mt-4 flex gap-2 border-t border-zinc-700/50 pt-4">
-                <a href="/edit-goal/{{ goal.id }}" class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-700 hover:text-zinc-100">
-                  Edit
-                </a>
-                <form action="/delete-goal/{{ goal.id }}" method="POST" onsubmit="return confirmDeletion()">
-                  <button type="submit" class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-400 transition-all hover:border-red-500/30 hover:bg-red-500/15 hover:text-red-400">
-                    Delete
-                  </button>
-                </form>
-              </div>
+              <span
+                class="inline-flex shrink-0 items-center rounded-full border border-blue-400/20 bg-blue-400/10 px-2.5 py-0.5 text-xs font-mono font-medium capitalize text-blue-400"
+              >
+                {{ goal.goalCategory }}
+              </span>
             </div>
-            {% endfor %}
-          {% else %}
-          <div class="py-14 text-center border border-dashed border-zinc-700 rounded-2xl bg-zinc-800/40">
-            <div class="w-10 h-10 mx-auto mb-4 rounded-xl border border-zinc-700 flex items-center justify-center bg-zinc-900/70">
-              <svg class="w-5 h-5 text-zinc-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+
+            <div class="mt-4 flex flex-wrap items-center gap-2 text-xs">
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1 text-zinc-400"
+              >
+                <svg
+                  class="w-3.5 h-3.5 text-zinc-500"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                {{ goal.targetDate }}
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1 font-medium capitalize {% if goal.goalStatus == 'completed' %}text-emerald-400{% elif goal.goalStatus == 'in progress' %}text-amber-400{% else %}text-zinc-500{% endif %}"
+              >
+                <span
+                  class="w-1.5 h-1.5 rounded-full {% if goal.goalStatus == 'completed' %}bg-emerald-400{% elif goal.goalStatus == 'in progress' %}bg-amber-400{% else %}bg-zinc-500{% endif %}"
+                ></span>
+                {{ goal.goalStatus }}
+              </span>
+            </div>
+
+            <div class="mt-4 flex gap-2 border-t border-zinc-700/50 pt-4">
+              <a
+                href="/edit-goal/{{ goal.id }}"
+                class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-700 hover:text-zinc-100"
+              >
+                Edit
+              </a>
+              <form
+                action="/delete-goal/{{ goal.id }}"
+                method="POST"
+                onsubmit="return confirmDeletion()"
+              >
+                <button
+                  type="submit"
+                  class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-400 transition-all hover:border-red-500/30 hover:bg-red-500/15 hover:text-red-400"
+                >
+                  Delete
+                </button>
+              </form>
+            </div>
+          </div>
+          {% endfor %} {% else %}
+          <div
+            class="py-14 text-center border border-dashed border-zinc-700 rounded-2xl bg-zinc-800/40"
+          >
+            <div
+              class="w-10 h-10 mx-auto mb-4 rounded-xl border border-zinc-700 flex items-center justify-center bg-zinc-900/70"
+            >
+              <svg
+                class="w-5 h-5 text-zinc-600"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 4v16m8-8H4"
+                />
               </svg>
             </div>
             <p class="text-zinc-500 text-sm mb-3">No goals are due today.</p>
-            <a href="/add-goal" class="text-blue-400 hover:text-blue-300 text-sm font-semibold transition-colors">
+            <a
+              href="/add-goal"
+              class="text-blue-400 hover:text-blue-300 text-sm font-semibold transition-colors"
+            >
               Add a goal for today →
             </a>
           </div>
@@ -264,71 +479,129 @@
       </section>
 
       <!-- ═══ ALL HABITS SECTION ═══ -->
-      <section class="mt-14">
-        <div class="flex items-center justify-between mb-5 pb-3 border-b border-zinc-800">
+      <section class="mb-14">
+        <div
+          class="flex items-center justify-between mb-5 pb-3 border-b border-zinc-800"
+        >
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold text-zinc-100 tracking-tight">All Habits</h2>
+            <h2 class="text-lg font-semibold text-zinc-100 tracking-tight">
+              All Habits
+            </h2>
             {% if all_habits %}
-            <span class="font-mono text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-md">{{ all_habits|length }}</span>
+            <span
+              class="font-mono text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-md"
+              >{{ all_habits|length }}</span
+            >
             {% endif %}
           </div>
           <div class="w-8 h-0.5 bg-zinc-500 rounded-full"></div>
         </div>
 
         <div class="space-y-3">
-          {% if all_habits %}
-            {% for habit in all_habits %}
-            <div class="rounded-2xl border border-zinc-700/60 bg-zinc-800/70 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-600 hover:shadow-xl hover:shadow-black/25">
-              <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <div class="flex items-center gap-2 flex-wrap">
-                    <h3 class="text-sm font-semibold text-zinc-100">{{ habit.habitName }}</h3>
-                    {% if habit in habits %}
-                    <span class="inline-flex items-center rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2 py-0.5 text-[11px] font-mono font-medium text-emerald-400">Today</span>
-                    {% endif %}
-                  </div>
-                  {% if habit.habitDescription %}
-                  <p class="mt-1 text-sm leading-relaxed text-zinc-400">{{ habit.habitDescription }}</p>
+          {% if all_habits %} {% for habit in all_habits %}
+          <div
+            class="rounded-2xl border border-zinc-700/60 bg-zinc-800/70 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-600 hover:shadow-xl hover:shadow-black/25"
+          >
+            <div
+              class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
+            >
+              <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3
+                    class="flex items-center text-sm font-semibold text-zinc-100 transition-colors group-hover:text-emerald-400"
+                  >
+                    <span
+                      class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-emerald-500/20 mr-3 group-hover:bg-emerald-500/40 transition"
+                    >
+                      <i
+                        class="fa-solid {{ habit.habitIcon }} text-lg text-emerald-400"
+                      ></i>
+                    </span>
+                    {{ habit.habitName }}
+                  </h3>
+                  {% if habit in habits %}
+                  <span
+                    class="inline-flex items-center rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2 py-0.5 text-[11px] font-mono font-medium text-emerald-400"
+                    >Today</span
+                  >
                   {% endif %}
                 </div>
-
-                <span class="inline-flex shrink-0 items-center rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-0.5 text-xs font-mono font-medium capitalize text-zinc-300">
-                  {{ habit.habitCategory }}
-                </span>
+                {% if habit.habitDescription %}
+                <p class="mt-1 text-sm leading-relaxed text-zinc-400">
+                  {{ habit.habitDescription }}
+                </p>
+                {% endif %}
               </div>
 
-              <div class="mt-4 flex flex-wrap items-center gap-2 text-xs">
-                <span class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1 text-zinc-400 capitalize">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  {{ habit.habitFrequency }}
-                </span>
-                <span class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1 text-zinc-400">
-                  <span class="w-1.5 h-1.5 rounded-full bg-zinc-500"></span>
-                  {{ habit_schedule_label(habit) }}
-                </span>
-              </div>
-
-              <div class="mt-4 flex gap-2 border-t border-zinc-700/50 pt-4">
-                <a href="/edit-habit/{{ habit.id }}" class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-700 hover:text-zinc-100">
-                  Edit
-                </a>
-                <form action="/delete-habit/{{ habit.id }}" method="POST" onsubmit="return confirmDeletion()">
-                  <button type="submit" class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-400 transition-all hover:border-red-500/30 hover:bg-red-500/15 hover:text-red-400">
-                    Delete
-                  </button>
-                </form>
-              </div>
+              <span
+                class="inline-flex shrink-0 items-center rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-0.5 text-xs font-mono font-medium capitalize text-zinc-300"
+              >
+                {{ habit.habitCategory }}
+              </span>
             </div>
-            {% endfor %}
-          {% else %}
-          <div class="py-14 text-center border border-dashed border-zinc-700 rounded-2xl bg-zinc-800/40">
-            <div class="w-10 h-10 mx-auto mb-4 rounded-xl border border-zinc-700 flex items-center justify-center bg-zinc-900/70">
-              <svg class="w-5 h-5 text-zinc-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+
+            <div class="mt-4 flex flex-wrap items-center gap-2 text-xs">
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1 text-zinc-400 capitalize"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                {{ habit.habitFrequency }}
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1 text-zinc-400"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-zinc-500"></span>
+                {{ habit_schedule_label(habit) }}
+              </span>
+            </div>
+
+            <div class="mt-4 flex gap-2 border-t border-zinc-700/50 pt-4">
+              <a
+                href="/edit-habit/{{ habit.id }}"
+                class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-700 hover:text-zinc-100"
+              >
+                Edit
+              </a>
+              <form
+                action="/delete-habit/{{ habit.id }}"
+                method="POST"
+                onsubmit="return confirmDeletion()"
+              >
+                <button
+                  type="submit"
+                  class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-400 transition-all hover:border-red-500/30 hover:bg-red-500/15 hover:text-red-400"
+                >
+                  Delete
+                </button>
+              </form>
+            </div>
+          </div>
+          {% endfor %} {% else %}
+          <div
+            class="py-14 text-center border border-dashed border-zinc-700 rounded-2xl bg-zinc-800/40"
+          >
+            <div
+              class="w-10 h-10 mx-auto mb-4 rounded-xl border border-zinc-700 flex items-center justify-center bg-zinc-900/70"
+            >
+              <svg
+                class="w-5 h-5 text-zinc-600"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 4v16m8-8H4"
+                />
               </svg>
             </div>
             <p class="text-zinc-500 text-sm mb-3">No habits added yet.</p>
-            <a href="/add-habit" class="text-emerald-400 hover:text-emerald-300 text-sm font-semibold transition-colors">
+            <a
+              href="/add-habit"
+              class="text-emerald-400 hover:text-emerald-300 text-sm font-semibold transition-colors"
+            >
               Create your first habit →
             </a>
           </div>
@@ -336,6 +609,150 @@
         </div>
       </section>
 
+      <!-- ═══ ALL GOALS SECTION ═══ -->
+      <section>
+        <div
+          class="flex items-center justify-between mb-5 pb-3 border-b border-zinc-800"
+        >
+          <div class="flex items-center gap-3">
+            <h2 class="text-lg font-semibold text-zinc-100 tracking-tight">
+              All Goals
+            </h2>
+            {% if goals %}
+            <span
+              class="font-mono text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-md"
+              >{{ goals|length }}</span
+            >
+            {% endif %}
+          </div>
+          <div class="w-8 h-0.5 bg-blue-500 rounded-full"></div>
+        </div>
+
+        <div class="space-y-3">
+          {% if all_goals %} {% for goal in all_goals %}
+          <div
+            class="rounded-2xl border border-zinc-700/60 bg-zinc-800/70 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-600 hover:shadow-xl hover:shadow-black/25"
+          >
+            <div
+              class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
+            >
+              <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3
+                    class="flex items-center text-sm font-semibold text-zinc-100 transition-colors group-hover:text-blue-400"
+                  >
+                    <span
+                      class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-500/20 mr-3 group-hover:bg-blue-500/40 transition"
+                    >
+                      <i
+                        class="fa-solid {{ goal.goalIcon }} text-lg text-blue-400"
+                      ></i>
+                    </span>
+                    {{ goal.goalName }}
+                  </h3>
+                  {% if goal in goals and goal.targetDate == today %}
+                  <span
+                    class="inline-flex items-center rounded-full border border-blue-400/20 bg-blue-400/10 px-2 py-0.5 text-[11px] font-mono font-medium text-blue-400"
+                    >Today</span
+                  >
+                  {% endif %}
+                </div>
+                {% if goal.goalDescription %}
+                <p class="mt-1 text-sm leading-relaxed text-zinc-400">
+                  {{ goal.goalDescription }}
+                </p>
+                {% endif %}
+              </div>
+
+              <span
+                class="inline-flex shrink-0 items-center rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-0.5 text-xs font-mono font-medium capitalize text-zinc-300"
+              >
+                {{ goal.goalCategory }}
+              </span>
+            </div>
+
+            <div class="mt-4 flex flex-wrap items-center gap-2 text-xs">
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1 text-zinc-400"
+              >
+                <svg
+                  class="w-3.5 h-3.5 text-zinc-500"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                {{ goal.targetDate }}
+              </span>
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1 font-medium capitalize {% if goal.goalStatus == 'completed' %}text-emerald-400{% elif goal.goalStatus == 'in progress' %}text-amber-400{% else %}text-zinc-500{% endif %}"
+              >
+                <span
+                  class="w-1.5 h-1.5 rounded-full {% if goal.goalStatus == 'completed' %}bg-emerald-400{% elif goal.goalStatus == 'in progress' %}bg-amber-400{% else %}bg-zinc-500{% endif %}"
+                ></span>
+                {{ goal.goalStatus }}
+              </span>
+            </div>
+
+            <div class="mt-4 flex gap-2 border-t border-zinc-700/50 pt-4">
+              <a
+                href="/edit-goal/{{ goal.id }}"
+                class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-700 hover:text-zinc-100"
+              >
+                Edit
+              </a>
+              <form
+                action="/delete-goal/{{ goal.id }}"
+                method="POST"
+                onsubmit="return confirmDeletion()"
+              >
+                <button
+                  type="submit"
+                  class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-400 transition-all hover:border-red-500/30 hover:bg-red-500/15 hover:text-red-400"
+                >
+                  Delete
+                </button>
+              </form>
+            </div>
+          </div>
+          {% endfor %} {% else %}
+          <div
+            class="py-14 text-center border border-dashed border-zinc-700 rounded-2xl bg-zinc-800/40"
+          >
+            <div
+              class="w-10 h-10 mx-auto mb-4 rounded-xl border border-zinc-700 flex items-center justify-center bg-zinc-900/70"
+            >
+              <svg
+                class="w-5 h-5 text-zinc-600"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+            </div>
+            <p class="text-zinc-500 text-sm mb-3">No goals added yet.</p>
+            <a
+              href="/add-goal"
+              class="text-blue-400 hover:text-blue-300 text-sm font-semibold transition-colors"
+            >
+              Create your first goal →
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </section>
     </main>
   </body>
 </html>
