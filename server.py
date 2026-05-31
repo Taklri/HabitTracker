@@ -1,3 +1,5 @@
+from datetime import date
+
 from flask import Flask, url_for, request, render_template, session, redirect, flash
 app = Flask(__name__)
 app.secret_key = "HabitUpKey"
@@ -45,27 +47,87 @@ def signupProcess():
         User.insertUser(newUser)
     return render_template("login.html")
 
+
+def _parse_csv_values(value):
+    if not value:
+        return set()
+    return {item.strip().lower() for item in str(value).split(",") if item.strip()}
+
+
+def _habit_is_for_today(habit, today):
+    frequency = (getattr(habit, "habitFrequency", "") or "").lower()
+
+    if frequency == "daily":
+        return True
+
+    if frequency == "weekly":
+        return today.strftime("%A").lower() in _parse_csv_values(getattr(habit, "habitWeekly", None))
+
+    if frequency == "monthly":
+        habit_day = getattr(habit, "habitMonthly", None)
+        try:
+            return int(habit_day) == today.day
+        except (TypeError, ValueError):
+            return False
+
+    return False
+
+
+def _habit_created_today(habit, today):
+    created_value = getattr(habit, "created_at", None) or getattr(habit, "createdAt", None)
+    if not created_value:
+        return False
+
+    created_text = str(created_value)
+    return created_text[:10] == today.isoformat()
+
+
+def _goal_is_for_today(goal, today):
+    return str(getattr(goal, "targetDate", "") or "")[:10] == today.isoformat()
+
+
+def _habit_schedule_label(habit):
+    frequency = (getattr(habit, "habitFrequency", "") or "").lower()
+
+    if frequency == "daily":
+        return "Every day"
+
+    if frequency == "weekly":
+        days = [day.strip().title() for day in str(getattr(habit, "habitWeekly", "") or "").split(",") if day.strip()]
+        return "Weekly: " + ", ".join(days) if days else "Weekly"
+
+    if frequency == "monthly":
+        day = getattr(habit, "habitMonthly", None)
+        return f"Monthly: Day {day}" if day else "Monthly"
+
+    return frequency.title() if frequency else "Unspecified"
+
 @app.route("/dashboard")
 def dashboard():
     if "user_id" not in session:
         return redirect("/login")
     
     user_id = session["user_id"]
-    selected_category = request.args.get("category", "all")
+    today = date.today()
 
-    if selected_category and selected_category != "all":
-        habits = Habit.filterHabitsByCategory(user_id, selected_category)
-        goals = Goal.filterGoalsByCategory(user_id, selected_category)
-    else:
-        habits = Habit.getHabitsByUser(user_id)
-        goals = Goal.getGoalsByUser(user_id)
+    habits = Habit.getHabitsByUser(user_id)
+    goals = Goal.getGoalsByUser(user_id)
+
+    todays_habits = [
+        habit for habit in habits
+        if _habit_is_for_today(habit, today) or _habit_created_today(habit, today)
+    ]
+    todays_goals = [goal for goal in goals if _goal_is_for_today(goal, today)]
 
     return render_template(
         "dashboardSample.html",
         username=session["username"],
-        habits=habits,
-        goals=goals,
-        selected_category=selected_category,
+        today=today,
+        today_label=today.strftime("%A, %B %d, %Y"),
+        habits=todays_habits,
+        all_habits=habits,
+        goals=todays_goals,
+        habit_schedule_label=_habit_schedule_label,
     )
 
 #habits

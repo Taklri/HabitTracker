@@ -3,62 +3,69 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Habit - HabitUp</title>
+    <title>HabitUp — Add Habit</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
+    <style>
+      body { font-family: 'DM Sans', sans-serif; }
+      select option { background: #27272a; color: #f4f4f5; }
+      ::-webkit-scrollbar { width: 5px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 999px; }
+    </style>
   </head>
-  <body
-    class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white"
-  >
-    <!-- Header -->
-    <nav
-      class="bg-slate-800/95 backdrop-blur border-b border-slate-700 shadow-md"
-    >
-      <div
-        class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center"
-      >
-        <h1 class="text-2xl font-bold text-emerald-400">HabitUp</h1>
-        <a
-          href="/dashboard"
-          class="text-slate-300 hover:text-slate-100 transition"
-          >← Back</a
-        >
+  <body class="min-h-screen bg-zinc-900 text-zinc-100">
+
+    <!-- NAV -->
+    <nav class="sticky top-0 z-50 bg-zinc-900/90 backdrop-blur-xl border-b border-zinc-800">
+      <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span>
+          <span class="text-base font-semibold tracking-tight text-zinc-100">HabitUp</span>
+        </div>
+        <a href="/dashboard" class="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200 border border-zinc-700 hover:border-zinc-600 px-4 py-1.5 rounded-lg transition-all">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+          </svg>
+          Back
+        </a>
       </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="max-w-2xl mx-auto px-4 py-8">
-      <div
-        class="rounded-3xl border border-slate-700 bg-slate-800/95 p-8 shadow-lg shadow-slate-900/50 backdrop-blur"
-      >
-        <h2 class="text-3xl font-bold text-slate-100 mb-2">Add New Habit</h2>
-        <p class="text-slate-400 mb-8">Create a new habit to start tracking</p>
+    <!-- MAIN -->
+    <main class="max-w-xl mx-auto px-6 py-12">
 
-        <form action="/add-habit/process" method="POST" class="space-y-6">
-          <!-- Habit Name -->
-          <div>
-            <label class="block text-sm font-semibold text-slate-300 mb-2"
-              >Habit Name</label
-            >
-            <input
-              type="text"
-              name="habitName"
-              placeholder=""
-              required
-              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
-            />
-          </div>
+      <!-- Page Title -->
+      <div class="mb-8">
+        <div class="flex items-center gap-2.5 mb-3">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
+          <span class="text-xs font-medium tracking-widest uppercase text-zinc-500">New Habit</span>
+        </div>
+        <h1 class="text-2xl font-semibold tracking-tight text-zinc-100">Create a Habit</h1>
+        <p class="text-sm text-zinc-500 mt-1">Build consistency with a new tracked habit.</p>
+      </div>
 
-          <!-- Habit Category -->
-          <div>
-            <label class="block text-sm font-semibold text-slate-300 mb-2"
-              >Category</label
-            >
-            <select
-              name="habitCategory"
-              required
-              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
-            >
-              <option value="">Select a category</option>
+      <!-- Form -->
+      <form action="/add-habit/process" method="POST" class="space-y-5">
+
+        <!-- Habit Name -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Habit Name <span class="text-emerald-400 normal-case tracking-normal">*</span></label>
+          <input type="text" name="habitName" required
+            class="w-full bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 text-zinc-100 text-sm placeholder-zinc-600 rounded-xl px-4 py-3 outline-none transition-all" />
+        </div>
+
+        <!-- 2-col row -->
+        <div class="grid grid-cols-2 gap-4">
+          <!-- Category -->
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Category <span class="text-emerald-400 normal-case tracking-normal">*</span></label>
+            <select name="habitCategory" required
+              class="w-full appearance-none bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 text-zinc-100 text-sm rounded-xl px-4 py-3 outline-none transition-all cursor-pointer"
+              style="background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%2371717a' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 9l6 6 6-6'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 12px center;">
+              <option value="">Select…</option>
               <option value="health">Health</option>
               <option value="productivity">Productivity</option>
               <option value="learning">Learning</option>
@@ -68,211 +75,99 @@
             </select>
           </div>
 
-          <!-- Habit Description -->
-          <div>
-            <label class="block text-sm font-semibold text-slate-300 mb-2"
-              >Description</label
-            >
-            <textarea
-              name="habitDescription"
-              placeholder=""
-              rows="4"
-              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
-            ></textarea>
-          </div>
-
-          <!-- Habit Frequency -->
-          <div>
-            <label class="block text-sm font-semibold text-slate-300 mb-2"
-              >Frequency</label
-            >
-            <select
-              name="habitFrequency"
-              required
-              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
-            >
+          <!-- Frequency -->
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Frequency <span class="text-emerald-400 normal-case tracking-normal">*</span></label>
+            <select name="habitFrequency" id="freq-select" required
+              class="w-full appearance-none bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 text-zinc-100 text-sm rounded-xl px-4 py-3 outline-none transition-all cursor-pointer"
+              style="background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%2371717a' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 9l6 6 6-6'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 12px center;">
               <option value="daily">Daily</option>
               <option value="weekly">Weekly</option>
               <option value="monthly">Monthly</option>
             </select>
           </div>
+        </div>
 
-          <!-- Weekly Days -->
-          <div id="weekly-days" class="hidden">
-            <label class="block text-sm font-semibold text-slate-300 mb-3"
-              >Select Days</label
-            >
-            <div class="grid grid-cols-2 gap-3">
-              <label class="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="weeklyDays"
-                  value="monday"
-                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
-                />
-                <span class="text-slate-300">Monday</span>
-              </label>
-              <label class="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="weeklyDays"
-                  value="tuesday"
-                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
-                />
-                <span class="text-slate-300">Tuesday</span>
-              </label>
-              <label class="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="weeklyDays"
-                  value="wednesday"
-                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
-                />
-                <span class="text-slate-300">Wednesday</span>
-              </label>
-              <label class="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="weeklyDays"
-                  value="thursday"
-                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
-                />
-                <span class="text-slate-300">Thursday</span>
-              </label>
-              <label class="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="weeklyDays"
-                  value="friday"
-                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
-                />
-                <span class="text-slate-300">Friday</span>
-              </label>
-              <label class="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="weeklyDays"
-                  value="saturday"
-                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
-                />
-                <span class="text-slate-300">Saturday</span>
-              </label>
-              <label class="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="weeklyDays"
-                  value="sunday"
-                  class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-emerald-600 focus:ring-emerald-600"
-                />
-                <span class="text-slate-300">Sunday</span>
-              </label>
-            </div>
-          </div>
+        <!-- Description -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Description</label>
+          <textarea name="habitDescription" rows="3"
+            class="w-full bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 text-zinc-100 text-sm placeholder-zinc-600 rounded-xl px-4 py-3 outline-none transition-all resize-none"></textarea>
+        </div>
 
-          <!-- Monthly Day -->
-          <div id="monthly-options" class="hidden">
-            <label class="block text-sm font-semibold text-slate-300 mb-2"
-              >Day of Month</label
-            >
-            <input
-              id="monthlyDay"
-              type="number"
-              name="monthlyDay"
-              min="1"
-              max="31"
-              value="1"
-              class="w-full rounded-xl border border-slate-600 bg-slate-700/50 px-4 py-3 text-white outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10"
-            />
-            <div id="monthly-error" class="hidden mt-2 text-sm text-red-400">
-              Enter a number between 1 and 31.
-            </div>
-            <p class="text-sm text-slate-400 mt-2">
-              Enter the day of month (1-31)
-            </p>
+        <!-- Weekly Days (conditional) -->
+        <div id="weekly-days" class="hidden space-y-3 bg-zinc-800 border border-zinc-700/60 rounded-xl p-4">
+          <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Select Days</label>
+          <div class="grid grid-cols-2 gap-2">
+            {% set days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'] %}
+            {% for day in days %}
+            <label class="flex items-center gap-3 cursor-pointer group/day">
+              <input type="checkbox" name="weeklyDays" value="{{ day|lower }}"
+                class="w-4 h-4 rounded border-zinc-600 bg-zinc-700 text-emerald-500 focus:ring-emerald-500/30 focus:ring-1 cursor-pointer" />
+              <span class="text-sm text-zinc-300 group-hover/day:text-zinc-100 transition-colors">{{ day }}</span>
+            </label>
+            {% endfor %}
+            <!-- Static fallback for non-Jinja preview -->
+            <label class="flex items-center gap-3 cursor-pointer group/day jinja-hide">
+              <input type="checkbox" name="weeklyDays" value="monday" class="w-4 h-4 rounded border-zinc-600 bg-zinc-700 text-emerald-500 cursor-pointer" />
+              <span class="text-sm text-zinc-300">Monday</span>
+            </label>
           </div>
+        </div>
 
-          <!-- Buttons -->
-          <div class="flex gap-3 pt-4">
-            <button
-              type="submit"
-              class="flex-1 bg-emerald-700 text-white px-6 py-3 rounded-xl hover:bg-emerald-800 font-semibold transition"
-            >
-              Add Habit
-            </button>
-            <a
-              href="/dashboard"
-              class="flex-1 bg-slate-700 text-slate-200 px-6 py-3 rounded-xl hover:bg-slate-600 font-semibold transition text-center"
-            >
-              Cancel
-            </a>
-          </div>
-        </form>
-      </div>
+        <!-- Monthly Day (conditional) -->
+        <div id="monthly-options" class="hidden space-y-1.5">
+          <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Day of Month</label>
+          <input id="monthlyDay" type="number" name="monthlyDay" min="1" max="31" value="1"
+            class="w-full bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 text-zinc-100 text-sm rounded-xl px-4 py-3 outline-none transition-all" />
+          <div id="monthly-error" class="hidden text-xs text-red-400 mt-1">Enter a number between 1 and 31.</div>
+          <p class="text-xs text-zinc-600">Which day of the month should this repeat?</p>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-3 pt-4 border-t border-zinc-800">
+          <button type="submit"
+            class="flex-1 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-sm font-semibold px-6 py-3 rounded-xl transition-all hover:-translate-y-0.5 shadow-lg shadow-emerald-500/20">
+            Add Habit
+          </button>
+          <a href="/dashboard"
+            class="flex-1 text-center bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-zinc-100 text-sm font-semibold px-6 py-3 rounded-xl border border-zinc-700 transition-all">
+            Cancel
+          </a>
+        </div>
+
+      </form>
     </main>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const freqSelect = document.querySelector(
-          'select[name="habitFrequency"]'
-        );
-        const weeklyBlock = document.getElementById("weekly-days");
-        const monthlyBlock = document.getElementById("monthly-options");
-        const monthlyDay = document.getElementById("monthlyDay");
-        const monthlyError = document.getElementById("monthly-error");
+      document.addEventListener('DOMContentLoaded', function () {
+        const freqSelect = document.getElementById('freq-select');
+        const weeklyBlock = document.getElementById('weekly-days');
+        const monthlyBlock = document.getElementById('monthly-options');
+        const monthlyDay = document.getElementById('monthlyDay');
+        const monthlyError = document.getElementById('monthly-error');
 
-        if (!freqSelect) return;
-
-        function updateFrequencyBlocks() {
+        function updateBlocks() {
           const v = freqSelect.value;
-          if (v === "weekly") {
-            weeklyBlock.classList.remove("hidden");
-            monthlyBlock.classList.add("hidden");
-          } else if (v === "monthly") {
-            monthlyBlock.classList.remove("hidden");
-            weeklyBlock.classList.add("hidden");
-          } else {
-            weeklyBlock.classList.add("hidden");
-            monthlyBlock.classList.add("hidden");
-          }
-          updateMonthlyFieldState();
+          weeklyBlock.classList.toggle('hidden', v !== 'weekly');
+          monthlyBlock.classList.toggle('hidden', v !== 'monthly');
+          if (monthlyDay) monthlyDay.disabled = v !== 'monthly';
+          if (v !== 'monthly' && monthlyError) monthlyError.classList.add('hidden');
         }
 
-        function updateMonthlyFieldState() {
-          if (!monthlyDay) return;
-          const visible = !monthlyBlock.classList.contains("hidden");
-          monthlyDay.disabled = !visible;
-          if (!visible) monthlyError.classList.add("hidden");
-        }
-
-        function validateMonthlyDay() {
+        function validateMonthly() {
           if (!monthlyDay) return true;
-          const raw = monthlyDay.value.toString();
-          const digits = raw.replace(/[^0-9]/g, "");
-          if (digits !== raw) monthlyDay.value = digits;
-
-          if (digits === "") {
-            monthlyError.classList.remove("hidden");
-            monthlyError.textContent = "Enter a number between 1 and 31.";
-            return false;
-          }
-
-          const n = parseInt(digits, 10);
-          if (isNaN(n) || n < 1 || n > 31) {
-            monthlyError.classList.remove("hidden");
-            monthlyError.textContent = "Enter a number between 1 and 31.";
-            return false;
-          }
-
-          monthlyError.classList.add("hidden");
-          return true;
+          const n = parseInt(monthlyDay.value, 10);
+          const valid = !isNaN(n) && n >= 1 && n <= 31;
+          monthlyError.classList.toggle('hidden', valid);
+          return valid;
         }
 
-        freqSelect.addEventListener("change", updateFrequencyBlocks);
-        updateFrequencyBlocks();
-
+        freqSelect.addEventListener('change', updateBlocks);
+        updateBlocks();
         if (monthlyDay) {
-          monthlyDay.addEventListener("input", validateMonthlyDay);
-          monthlyDay.addEventListener("blur", validateMonthlyDay);
+          monthlyDay.addEventListener('input', validateMonthly);
+          monthlyDay.addEventListener('blur', validateMonthly);
         }
       });
     </script>
