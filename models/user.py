@@ -1,6 +1,7 @@
 from mysqlconnection import MysqlConnection
 
 class User:
+    MIN_PASSWORD_LENGTH = 8
     DEFAULT_AVATAR = "panda"
     ALLOWED_AVATARS = {"chicken", "dog", "gorilla", "panda", "rabbit"}
 
@@ -80,3 +81,19 @@ class User:
         WHERE id = %(id)s;
         """
         return MysqlConnection("habitUp").query_start(query, update_data)
+
+    @classmethod
+    def usernameExists(cls, username, exclude_user_id=None):
+        params = {"username": str(username or "").strip().lower()}
+        query = """
+        SELECT id FROM users
+        WHERE LOWER(username) = %(username)s
+        """
+
+        if exclude_user_id is not None:
+            query += " AND id != %(exclude_user_id)s"
+            params["exclude_user_id"] = exclude_user_id
+
+        query += " LIMIT 1;"
+        result = MysqlConnection("habitUp").query_start(query, params)
+        return len(result) > 0

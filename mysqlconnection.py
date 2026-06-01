@@ -5,8 +5,7 @@ class MysqlConnection:
         connection = pymysql.connect(
             host='localhost',
             user='root',
-            password='root',
-            port=3307,
+            password='november152024',
             db="habitUp",
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor)

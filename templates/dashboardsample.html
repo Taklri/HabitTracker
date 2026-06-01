@@ -120,11 +120,7 @@
             <img src="/avatars/{{ avatar }}.png" alt="Your profile avatar" class="h-7 w-7 rounded-full border border-zinc-600 bg-zinc-800 p-1 object-contain" />
             <span class="text-emerald-400 font-medium">{{ username }}</span>
           </a>
-          <a href="/" class="text-xs font-medium text-zinc-400 hover:text-zinc-200 border border-zinc-700 hover:border-zinc-600 px-4 py-1.5 rounded-lg transition-all duration-150">
-          <span class="text-sm text-zinc-400 font-mono hidden sm:block">
-            hey,
-            <span class="text-emerald-400 font-medium">{{ username }}</span>
-          </span>
+          
           <a
             href="/"
             class="text-xs font-medium text-zinc-400 hover:text-zinc-200 border border-zinc-700 hover:border-zinc-600 px-4 py-1.5 rounded-lg transition-all duration-150"
@@ -222,15 +218,19 @@
         </div>
       </section>
 
+      <div class="mb-14 grid grid-cols-1 gap-6 xl:grid-cols-2 xl:gap-8">
       <!-- ═══ HABITS SECTION ═══ -->
-      <section class="mb-14">
+      <section>
         <div
           class="flex items-center justify-between mb-5 pb-3 border-b border-zinc-800"
         >
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold text-zinc-100 tracking-tight">
-              Habits
+            <h2 class="text-lg font-semibold tracking-tight">
+              <a href="/all-habits" class="text-zinc-100 transition-colors hover:text-emerald-300">
+                Habits
+              </a>
             </h2>
+            <a href="/all-habits" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">View all</a>
             {% if habits %}
             <span
               class="font-mono text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-md"
@@ -314,7 +314,7 @@
           </div>
           {% endfor %} {% else %}
           <div
-            class="py-14 text-center border border-dashed border-zinc-700 rounded-2xl bg-zinc-800/40"
+            class="rounded-2xl border border-zinc-700/60 bg-zinc-800/90 p-6 text-center min-h-[258px] flex flex-col items-center justify-center"
           >
             <div
               class="w-10 h-10 mx-auto mb-4 rounded-xl border border-zinc-700 flex items-center justify-center bg-zinc-900/70"
@@ -348,14 +348,17 @@
       </section>
 
       <!-- ═══ GOALS SECTION ═══ -->
-      <section class="mb-14">
+      <section>
         <div
           class="flex items-center justify-between mb-5 pb-3 border-b border-zinc-800"
         >
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold text-zinc-100 tracking-tight">
-              Goals
+            <h2 class="text-lg font-semibold tracking-tight">
+              <a href="/all-goals" class="text-zinc-100 transition-colors hover:text-blue-300">
+                Goals
+              </a>
             </h2>
+            <a href="/all-goals" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">View all</a>
             {% if goals %}
             <span
               class="font-mono text-xs text-zinc-500 bg-zinc-800 px-2 py-0.5 rounded-md"
@@ -453,7 +456,7 @@
           </div>
           {% endfor %} {% else %}
           <div
-            class="py-14 text-center border border-dashed border-zinc-700 rounded-2xl bg-zinc-800/40"
+            class="rounded-2xl border border-zinc-700/60 bg-zinc-800/90 p-6 text-center min-h-[258px] flex flex-col items-center justify-center"
           >
             <div
               class="w-10 h-10 mx-auto mb-4 rounded-xl border border-zinc-700 flex items-center justify-center bg-zinc-900/70"
@@ -483,6 +486,7 @@
           {% endif %}
         </div>
       </section>
+      </div>
 
       <!-- ═══ ALL HABITS SECTION ═══ -->
       <section class="mb-14">
@@ -501,6 +505,19 @@
             {% endif %}
           </div>
           <div class="w-8 h-0.5 bg-zinc-500 rounded-full"></div>
+          <form method="GET" class="ml-4">
+            <input type="hidden" name="goal_category" value="{{ selected_goal_category or '' }}" />
+            <label class="sr-only">Filter habits by category</label>
+            <select name="habit_category" onchange="this.form.submit()" class="bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs rounded-xl px-3 py-2">
+              <option value="" {% if not selected_habit_category %}selected{% endif %}>All</option>
+              <option value="health" {% if selected_habit_category == 'health' %}selected{% endif %}>Health</option>
+              <option value="productivity" {% if selected_habit_category == 'productivity' %}selected{% endif %}>Productivity</option>
+              <option value="finance" {% if selected_habit_category == 'finance' %}selected{% endif %}>Finance</option>
+              <option value="learning" {% if selected_habit_category == 'learning' %}selected{% endif %}>Learning</option>
+              <option value="fitness" {% if selected_habit_category == 'fitness' %}selected{% endif %}>Fitness</option>
+              <option value="personal" {% if selected_habit_category == 'personal' %}selected{% endif %}>Personal</option>
+            </select>
+          </form>
         </div>
 
         <div class="space-y-3">
@@ -632,6 +649,19 @@
             {% endif %}
           </div>
           <div class="w-8 h-0.5 bg-blue-500 rounded-full"></div>
+          <form method="GET" class="ml-4">
+            <input type="hidden" name="habit_category" value="{{ selected_habit_category or '' }}" />
+            <label class="sr-only">Filter goals by category</label>
+            <select name="goal_category" onchange="this.form.submit()" class="bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs rounded-xl px-3 py-2">
+              <option value="" {% if not selected_goal_category %}selected{% endif %}>All</option>
+              <option value="health" {% if selected_goal_category == 'health' %}selected{% endif %}>Health</option>
+              <option value="productivity" {% if selected_goal_category == 'productivity' %}selected{% endif %}>Productivity</option>
+              <option value="finance" {% if selected_goal_category == 'finance' %}selected{% endif %}>Finance</option>
+              <option value="learning" {% if selected_goal_category == 'learning' %}selected{% endif %}>Learning</option>
+              <option value="fitness" {% if selected_goal_category == 'fitness' %}selected{% endif %}>Fitness</option>
+              <option value="personal" {% if selected_goal_category == 'personal' %}selected{% endif %}>Personal</option>
+            </select>
+          </form>
         </div>
 
         <div class="space-y-3">

@@ -48,6 +48,12 @@
         <p class="text-sm text-zinc-500 mt-1">Build consistency with a new tracked habit.</p>
       </div>
 
+      {% if error %}
+      <div class="mb-6 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3">
+        {{ error }}
+      </div>
+      {% endif %}
+
       <!-- Form -->
       <form action="/add-habit/process" method="POST" class="space-y-5">
 

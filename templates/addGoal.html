@@ -96,7 +96,7 @@
           <!-- Target Date -->
           <div class="space-y-1.5">
             <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Target Date <span class="text-blue-400 normal-case tracking-normal">*</span></label>
-            <input type="date" name="targetDate" required
+            <input type="date" name="targetDate" min="{{ min_date }}" required
               class="w-full bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 text-zinc-100 text-sm rounded-xl px-4 py-3 outline-none transition-all cursor-pointer" />
           </div>
         </div>

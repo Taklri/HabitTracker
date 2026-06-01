@@ -56,3 +56,23 @@ class Goal:
             for row in result:
                 goals.append(cls(row))
         return goals
+
+    @classmethod
+    def goalNameExists(cls, user_id, goal_name, exclude_goal_id=None):
+        params = {
+            "user_id": user_id,
+            "goalName": str(goal_name or "").strip().lower(),
+        }
+        query = """
+        SELECT id FROM goals
+        WHERE userId = %(user_id)s
+          AND LOWER(goalName) = %(goalName)s
+        """
+
+        if exclude_goal_id is not None:
+            query += " AND id != %(exclude_goal_id)s"
+            params["exclude_goal_id"] = exclude_goal_id
+
+        query += " LIMIT 1;"
+        result = MysqlConnection("habitUp").query_start(query, params)
+        return len(result) > 0

@@ -58,12 +58,41 @@ def signupPage():
 
 @app.route("/signup/process", methods=["POST"])
 def signupProcess():
+    username = request.form.get("username", "").strip()
+    password = request.form.get("password", "")
+    reenterpass = request.form.get("reenterpass", "")
+    selected_avatar = _sanitize_avatar(request.form.get("avatar"))
+
     newUser={
-        "username": request.form["username"],
-        "password": request.form["password"],
-        "reenterpass": request.form["reenterpass"],
-        "avatar": _sanitize_avatar(request.form.get("avatar")),
+        "username": username,
+        "password": password,
+        "reenterpass": reenterpass,
+        "avatar": selected_avatar,
     }
+    if not username:
+        return render_template(
+            "signup.html",
+            error="Username cannot be blank",
+            allowed_avatars=_allowed_avatars(),
+            default_avatar=selected_avatar,
+        )
+
+    if User.usernameExists(username):
+        return render_template(
+            "signup.html",
+            error="Username already exists",
+            allowed_avatars=_allowed_avatars(),
+            default_avatar=selected_avatar,
+        )
+
+    if len(password) < User.MIN_PASSWORD_LENGTH:
+        return render_template(
+            "signup.html",
+            error=f"Password must be at least {User.MIN_PASSWORD_LENGTH} characters",
+            allowed_avatars=_allowed_avatars(),
+            default_avatar=selected_avatar,
+        )
+
     if newUser["password"] != newUser["reenterpass"]:
         return render_template(
             "signup.html",
@@ -113,8 +142,25 @@ def profileProcess():
             error="Username cannot be blank",
         )
 
+    if User.usernameExists(username, exclude_user_id=session["user_id"]):
+        return render_template(
+            "profile.html",
+            username=username,
+            selected_avatar=avatar,
+            allowed_avatars=_allowed_avatars(),
+            error="Username already exists",
+        )
+
+    if new_password and len(new_password) < User.MIN_PASSWORD_LENGTH:
+        return render_template(
+            "profile.html",
+            username=username,
+            selected_avatar=avatar,
+            allowed_avatars=_allowed_avatars(),
+            error=f"Password must be at least {User.MIN_PASSWORD_LENGTH} characters",
+        )
+
     if new_password and new_password != reenter_password:
-        user = User.getUserById({"id": session["user_id"]})
         return render_template(
             "profile.html",
             username=username,
@@ -190,6 +236,27 @@ def _habit_schedule_label(habit):
 
     return frequency.title() if frequency else "Unspecified"
 
+
+def _habit_sort_key(habit):
+    created_value = getattr(habit, "created_at", None) or getattr(habit, "createdAt", None)
+    if created_value:
+        return str(created_value)
+    return str(getattr(habit, "id", 0))
+
+
+def _goal_sort_key(goal):
+    return str(getattr(goal, "targetDate", "") or "")
+
+
+def _sorted_habits_for_user(user_id):
+    habits = Habit.getHabitsByUser(user_id)
+    return sorted(habits, key=_habit_sort_key)
+
+
+def _sorted_goals_for_user(user_id):
+    goals = Goal.getGoalsByUser(user_id)
+    return sorted(goals, key=_goal_sort_key)
+
 @app.route("/dashboard")
 def dashboard():
     if "user_id" not in session:
@@ -198,14 +265,24 @@ def dashboard():
     user_id = session["user_id"]
     today = date.today()
 
-    habits = Habit.getHabitsByUser(user_id)
-    goals = Goal.getGoalsByUser(user_id)
+    selected_habit_category = request.args.get("habit_category", "").strip() or None
+    selected_goal_category = request.args.get("goal_category", "").strip() or None
+
+    if selected_habit_category:
+        all_habits = sorted(Habit.filterHabitsByCategory(user_id, selected_habit_category), key=_habit_sort_key)
+    else:
+        all_habits = _sorted_habits_for_user(user_id)
+
+    if selected_goal_category:
+        all_goals = sorted(Goal.filterGoalsByCategory(user_id, selected_goal_category), key=_goal_sort_key)
+    else:
+        all_goals = _sorted_goals_for_user(user_id)
 
     todays_habits = [
-        habit for habit in habits
+        habit for habit in all_habits
         if _habit_is_for_today(habit, today) or _habit_created_today(habit, today)
     ]
-    todays_goals = [goal for goal in goals if _goal_is_for_today(goal, today)]
+    todays_goals = [goal for goal in all_goals if _goal_is_for_today(goal, today)]
 
     return render_template(
         "dashboardSample.html",
@@ -214,10 +291,41 @@ def dashboard():
         today=today,
         today_label=today.strftime("%A, %B %d, %Y"),
         habits=todays_habits,
-        all_habits=habits,
+        all_habits=all_habits,
         goals=todays_goals,
-        all_goals=goals,
+        all_goals=all_goals,
         habit_schedule_label=_habit_schedule_label,
+        selected_habit_category=selected_habit_category,
+        selected_goal_category=selected_goal_category,
+    )
+
+
+@app.route("/all-habits")
+def allHabits():
+    if "user_id" not in session:
+        return redirect("/login")
+
+    habits = _sorted_habits_for_user(session["user_id"])
+    return render_template(
+        "allHabit.html",
+        username=session["username"],
+        avatar=_sanitize_avatar(session.get("avatar")),
+        habits=habits,
+        habit_schedule_label=_habit_schedule_label,
+    )
+
+
+@app.route("/all-goals")
+def allGoals():
+    if "user_id" not in session:
+        return redirect("/login")
+
+    goals = _sorted_goals_for_user(session["user_id"])
+    return render_template(
+        "allGoals.html",
+        username=session["username"],
+        avatar=_sanitize_avatar(session.get("avatar")),
+        goals=goals,
     )
 
 #habits
@@ -247,9 +355,16 @@ def addHabitProcess():
     elif habitFrequency == "monthly":
         monthly_day = request.form.get("monthlyDay") or None
 
+    habit_name = request.form.get("habitName", "").strip()
+    if not habit_name:
+        return render_template("addHabitSample.html", error="Habit name is required")
+
+    if Habit.habitNameExists(user_id, habit_name):
+        return render_template("addHabitSample.html", error="Habit name already exists")
+
     habit_data = {
         "userId": user_id,
-        "habitName": request.form.get("habitName"),
+        "habitName": habit_name,
         "habitCategory": request.form.get("habitCategory"),
         "habitDescription": request.form.get("habitDescription"),
         "habitFrequency": habitFrequency,
@@ -289,10 +404,19 @@ def editHabit(habit_id):
     elif habitFrequency == "monthly":
         monthly_day = request.form.get("monthlyDay") or None
 
+    habit_name = request.form.get("habitName", "").strip()
+    if not habit_name:
+        habit = Habit.getHabitById(habit_id)
+        return render_template("editPageSample.html", habit=habit, error="Habit name is required")
+
+    if Habit.habitNameExists(session["user_id"], habit_name, exclude_habit_id=habit_id):
+        habit = Habit.getHabitById(habit_id)
+        return render_template("editPageSample.html", habit=habit, error="Habit name already exists")
+
     habit_data = {
         "id": habit_id,
         "userId": session["user_id"],
-        "habitName": request.form.get("habitName"),
+        "habitName": habit_name,
         "habitCategory": request.form.get("habitCategory"),
         "habitDescription": request.form.get("habitDescription"),
         "habitFrequency": habitFrequency,
@@ -308,7 +432,7 @@ def editHabit(habit_id):
 @app.route("/add-goal", methods=["GET", "POST"])
 def addGoal():
     if request.method == "GET":
-        return render_template("addGoal.html")
+        return render_template("addGoal.html", min_date=date.today().isoformat())
     
     if "user_id" not in session:
         return redirect("/login")
@@ -318,14 +442,20 @@ def addGoal():
     goal_cat = request.form.get("goalCategory", "").strip()
     target_date = request.form.get("targetDate", "").strip()
 
+    if not goal_name:
+        return render_template("addGoal.html", error="Goal name is required", min_date=date.today().isoformat())
+
+    if Goal.goalNameExists(session["user_id"], goal_name):
+        return render_template("addGoal.html", error="Goal name already exists", min_date=date.today().isoformat())
+
     from datetime import datetime
     if target_date:
         try:
             target = datetime.strptime(target_date, "%Y-%m-%d").date()
             if target < date.today():
-                return render_template("addGoal.html", error="Target date cannot be in the past")
+                return render_template("addGoal.html", error="Target date cannot be in the past", min_date=date.today().isoformat())
         except ValueError:
-            return render_template("addGoal.html", error="Invalid date format")
+            return render_template("addGoal.html", error="Invalid date format", min_date=date.today().isoformat())
     
     user_id = session["user_id"]
     goal_data = {
@@ -357,17 +487,39 @@ def editGoal(goal_id):
     
     if request.method == "GET":
         goal = Goal.getGoalById(goal_id)
-        return render_template("editGoal.html", goal=goal)
+        return render_template("editGoal.html", goal=goal, min_date=date.today().isoformat())
     
     user_id = session["user_id"]
+    goal_name = request.form.get("goalName", "").strip()
+    target_date = request.form.get("targetDate", "").strip()
+
+    if not goal_name:
+        goal = Goal.getGoalById(goal_id)
+        return render_template("editGoal.html", goal=goal, error="Goal name is required", min_date=date.today().isoformat())
+
+    if Goal.goalNameExists(user_id, goal_name, exclude_goal_id=goal_id):
+        goal = Goal.getGoalById(goal_id)
+        return render_template("editGoal.html", goal=goal, error="Goal name already exists", min_date=date.today().isoformat())
+
+    from datetime import datetime
+    if target_date:
+        try:
+            target = datetime.strptime(target_date, "%Y-%m-%d").date()
+            if target < date.today():
+                goal = Goal.getGoalById(goal_id)
+                return render_template("editGoal.html", goal=goal, error="Target date cannot be in the past", min_date=date.today().isoformat())
+        except ValueError:
+            goal = Goal.getGoalById(goal_id)
+            return render_template("editGoal.html", goal=goal, error="Invalid date format", min_date=date.today().isoformat())
+
     goal_data = {
         "id": goal_id,
         "userId": user_id,
-        "goalName": request.form.get("goalName"),
+        "goalName": goal_name,
         "goalDescription": request.form.get("goalDescription"),
         "goalCategory": request.form.get("goalCategory"),
         "goalStatus": request.form.get("goalStatus"),
-        "targetDate": request.form.get("targetDate"),
+        "targetDate": target_date,
         "progress": int(request.form.get("progress", 0)),
         "goalIcon": request.form.get("goalIcon", "🎯"),
     }

@@ -61,3 +61,23 @@ class Habit:
             for row in result:
                 habits.append(cls(row))
         return habits
+
+    @classmethod
+    def habitNameExists(cls, user_id, habit_name, exclude_habit_id=None):
+        params = {
+            "userId": user_id,
+            "habitName": str(habit_name or "").strip().lower(),
+        }
+        query = """
+        SELECT id FROM habit
+        WHERE userId = %(userId)s
+          AND LOWER(habitName) = %(habitName)s
+        """
+
+        if exclude_habit_id is not None:
+            query += " AND id != %(exclude_habit_id)s"
+            params["exclude_habit_id"] = exclude_habit_id
+
+        query += " LIMIT 1;"
+        result = MysqlConnection("habitUp").query_start(query, params)
+        return len(result) > 0
