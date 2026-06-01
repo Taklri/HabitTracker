@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
       body { font-family: 'DM Sans', sans-serif; }
       select option { background: #27272a; color: #f4f4f5; }
@@ -88,6 +89,15 @@
           </div>
         </div>
 
+        <!-- Icon Picker (conditional by category) -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Icon</label>
+          <p class="text-xs text-zinc-600 mb-2">Select a category first to see available icons.</p>
+          <div id="icon-grid" class="grid grid-cols-6 gap-2">
+
+          </div>
+          <input type="hidden" name="habitIcon" id="habitIcon" value="fa-check" />
+        </div>
         <!-- Description -->
         <div class="space-y-1.5">
           <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Description</label>
@@ -170,6 +180,45 @@
           monthlyDay.addEventListener('blur', validateMonthly);
         }
       });
+    </script>
+
+    <script>
+      const iconsByCategory = {
+        health: ['fa-heart', 'fa-capsules', 'fa-person-hiking', 'fa-stethoscope', 'fa-hospital', 'fa-dumbbell'],
+        productivity: ['fa-bolt', 'fa-check', 'fa-bullseye', 'fa-pen', 'fa-briefcase', 'fa-rocket'],
+        learning: ['fa-book', 'fa-brain', 'fa-laptop', 'fa-graduation-cap', 'fa-microscope', 'fa-lightbulb'],
+        fitness: ['fa-dumbbell', 'fa-person-running', 'fa-person-biking', 'fa-person-hiking', 'fa-basketball', 'fa-swimmer'],
+        personal: ['fa-star', 'fa-palette', 'fa-mask', 'fa-mobile', 'fa-music', 'fa-trophy'],
+        finance: ['fa-money-bill', 'fa-chart-line', 'fa-credit-card', 'fa-chart-pie', 'fa-bank', 'fa-gem']
+      };
+
+      const categorySelect = document.querySelector('select[name="habitCategory"]');
+      const iconGrid = document.getElementById('icon-grid');
+      const iconInput = document.getElementById('habitIcon');
+
+      function updateIcons() {
+        const category = categorySelect.value;
+        iconGrid.innerHTML = '';
+        
+        if (category && iconsByCategory[category]) {
+          iconsByCategory[category].forEach(iconClass => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'text-xl p-3 rounded-lg border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 hover:border-emerald-500 transition cursor-pointer flex items-center justify-center';
+            btn.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+            btn.onclick = (e) => {
+              e.preventDefault();
+              document.querySelectorAll('#icon-grid button').forEach(b => b.classList.remove('border-emerald-500', 'bg-zinc-700'));
+              btn.classList.add('border-emerald-500', 'bg-zinc-700');
+              iconInput.value = iconClass;
+            };
+            iconGrid.appendChild(btn);
+          });
+        }
+      }
+
+      categorySelect.addEventListener('change', updateIcons);
+      updateIcons();
     </script>
   </body>
 </html>

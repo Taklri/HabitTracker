@@ -11,12 +11,13 @@ class Habit:
         self.habitFrequency = data["habitFrequency"]
         self.habitWeekly = data["habitWeekly"]
         self.habitMonthly = data["habitMonthly"]
+        self.habitIcon = data.get("habitIcon", "📋") 
 
     # methods exclusive for habit schema
     @classmethod
     def insertHabit(cls, data):
-        query = """INSERT INTO habit (userId, habitName, habitCategory, habitDescription, habitFrequency, habitWeekly, habitMonthly) 
-        VALUES (%(userId)s, %(habitName)s, %(habitCategory)s, %(habitDescription)s, %(habitFrequency)s, %(habitWeekly)s, %(habitMonthly)s);"""
+        query = """INSERT INTO habit (userId, habitName, habitCategory, habitDescription, habitFrequency, habitWeekly, habitMonthly, habitIcon) 
+        VALUES (%(userId)s, %(habitName)s, %(habitCategory)s, %(habitDescription)s, %(habitFrequency)s, %(habitWeekly)s, %(habitMonthly)s, %(habitIcon)s);"""
         return MysqlConnection("habitUp").query_start(query, data)
     
     @classmethod
@@ -44,7 +45,7 @@ class Habit:
     
     @classmethod
     def editHabit(cls, data):
-        query = """UPDATE habit SET habitName = %(habitName)s, habitCategory = %(habitCategory)s, habitDescription = %(habitDescription)s, habitFrequency = %(habitFrequency)s, habitWeekly = %(habitWeekly)s, habitMonthly = %(habitMonthly)s WHERE id = %(id)s;"""
+        query = """UPDATE habit SET habitName = %(habitName)s, habitCategory = %(habitCategory)s, habitDescription = %(habitDescription)s, habitFrequency = %(habitFrequency)s, habitWeekly = %(habitWeekly)s, habitMonthly = %(habitMonthly)s, habitIcon = %(habitIcon)s WHERE id = %(id)s;"""
         return MysqlConnection("habitUp").query_start(query, data)
 
     @classmethod

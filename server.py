@@ -216,6 +216,7 @@ def dashboard():
         habits=todays_habits,
         all_habits=habits,
         goals=todays_goals,
+        all_goals=goals,
         habit_schedule_label=_habit_schedule_label,
     )
 
@@ -254,6 +255,7 @@ def addHabitProcess():
         "habitFrequency": habitFrequency,
         "habitWeekly": weekly_days,
         "habitMonthly": monthly_day,
+        "habitIcon": request.form.get("habitIcon", "📋"),
     }
 
     Habit.insertHabit(habit_data)
@@ -296,6 +298,7 @@ def editHabit(habit_id):
         "habitFrequency": habitFrequency,
         "habitWeekly": weekly_days,
         "habitMonthly": monthly_day,
+        "habitIcon": request.form.get("habitIcon", "📋"),
     }
 
     Habit.updateHabit(habit_data)
@@ -310,15 +313,30 @@ def addGoal():
     if "user_id" not in session:
         return redirect("/login")
     
+    goal_name = request.form.get("goalName", "").strip()
+    goal_desc = request.form.get("goalDescription", "").strip()
+    goal_cat = request.form.get("goalCategory", "").strip()
+    target_date = request.form.get("targetDate", "").strip()
+
+    from datetime import datetime
+    if target_date:
+        try:
+            target = datetime.strptime(target_date, "%Y-%m-%d").date()
+            if target < date.today():
+                return render_template("addGoal.html", error="Target date cannot be in the past")
+        except ValueError:
+            return render_template("addGoal.html", error="Invalid date format")
+    
     user_id = session["user_id"]
     goal_data = {
         "userId": user_id,
-        "goalName": request.form.get("goalName"),
-        "goalDescription": request.form.get("goalDescription"),
-        "goalCategory": request.form.get("goalCategory"),
+        "goalName": goal_name,
+        "goalDescription": goal_desc,
+        "goalCategory": goal_cat,
         "goalStatus": "not started",
-        "targetDate": request.form.get("targetDate"),
+        "targetDate": target_date,
         "progress": 0,
+        "goalIcon": request.form.get("goalIcon", "🎯"),
     }
     
     Goal.createGoal(goal_data)
@@ -351,9 +369,11 @@ def editGoal(goal_id):
         "goalStatus": request.form.get("goalStatus"),
         "targetDate": request.form.get("targetDate"),
         "progress": int(request.form.get("progress", 0)),
+        "goalIcon": request.form.get("goalIcon", "🎯"),
     }
     
     Goal.updateGoal(goal_data)
     return redirect("/dashboard")
+
 if __name__ == "__main__":
     app.run(debug=True)

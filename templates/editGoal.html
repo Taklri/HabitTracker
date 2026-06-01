@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
       body { font-family: 'DM Sans', sans-serif; }
       select option { background: #27272a; color: #f4f4f5; }
@@ -48,6 +49,13 @@
         <h1 class="text-2xl font-semibold tracking-tight text-zinc-100">Update Goal</h1>
         <p class="text-sm text-zinc-500 mt-1">Refine your goal details and keep things on track.</p>
       </div>
+
+      <!-- Error Message -->
+      {% if error %}
+      <div class="mb-6 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3">
+        {{ error }}
+      </div>
+      {% endif %}
 
       <!-- Form -->
       <form action="/edit-goal/{{ goal.id }}" method="POST" class="space-y-5">
@@ -91,6 +99,15 @@
           </div>
         </div>
 
+        <!-- Icon Picker (conditional by category) -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Icon</label>
+          <div id="icon-grid" class="grid grid-cols-6 gap-2">
+
+          </div>
+          <input type="hidden" name="goalIcon" id="goalIcon" value="{{ goal.goalIcon }}" />
+        </div>
+
         <!-- Status -->
         <div class="space-y-1.5">
           <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Status <span class="text-blue-400 normal-case tracking-normal">*</span></label>
@@ -117,7 +134,49 @@
 
       </form>
     </main>
+    <script>
+      const iconsByCategory = {
+        health: ['fa-heart', 'fa-capsules', 'fa-person-hiking', 'fa-stethoscope', 'fa-hospital', 'fa-dumbbell'],
+        productivity: ['fa-bolt', 'fa-check', 'fa-bullseye', 'fa-pen', 'fa-briefcase', 'fa-rocket'],
+        finance: ['fa-money-bill', 'fa-chart-line', 'fa-credit-card', 'fa-chart-pie', 'fa-bank', 'fa-gem'],
+        learning: ['fa-book', 'fa-brain', 'fa-laptop', 'fa-graduation-cap', 'fa-microscope', 'fa-lightbulb'],
+        fitness: ['fa-dumbbell', 'fa-person-running', 'fa-person-biking', 'fa-person-hiking', 'fa-basketball', 'fa-swimmer'],
+        personal: ['fa-star', 'fa-palette', 'fa-mask', 'fa-mobile', 'fa-music', 'fa-trophy']
+      };
 
+      const categorySelect = document.querySelector('select[name="goalCategory"]');
+      const iconGrid = document.getElementById('icon-grid');
+      const iconInput = document.getElementById('goalIcon');
+
+      function updateIcons() {
+        const category = categorySelect.value;
+        iconGrid.innerHTML = '';
+        
+        if (category && iconsByCategory[category]) {
+          iconsByCategory[category].forEach(iconClass => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'text-3xl p-4 rounded-lg border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 hover:border-emerald-500 transition cursor-pointer flex items-center justify-center';
+            
+            // Highlight current icon
+            if (iconClass === iconInput.value) {
+              btn.classList.add('border-blue-500', 'bg-zinc-700');
+            }
+            
+            btn.onclick = (e) => {
+              e.preventDefault();
+              document.querySelectorAll('#icon-grid button').forEach(b => b.classList.remove('border-blue-500', 'bg-zinc-700'));
+              btn.classList.add('border-blue-500', 'bg-zinc-700');
+              iconInput.value = iconClass;
+            };
+            iconGrid.appendChild(btn);
+          });
+        }
+      }
+
+      categorySelect.addEventListener('change', updateIcons);
+      updateIcons();
+    </script>
 
   </body>
 </html>

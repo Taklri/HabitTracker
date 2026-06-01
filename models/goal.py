@@ -10,11 +10,12 @@ class Goal:
         self.goalStatus = data["goalStatus"]
         self.targetDate = data["targetDate"]
         self.progress = data["progress"]
+        self.goalIcon = data.get("goalIcon", "🎯")
 
     @classmethod
     def createGoal(cls, data):
-        query = """INSERT INTO goals (userId, goalName, goalDescription, goalCategory, goalStatus, targetDate, progress) 
-        VALUES (%(userId)s, %(goalName)s, %(goalDescription)s, %(goalCategory)s, %(goalStatus)s, %(targetDate)s, %(progress)s);"""
+        query = """INSERT INTO goals (userId, goalName, goalDescription, goalCategory, goalStatus, targetDate, progress, goalIcon) 
+        VALUES (%(userId)s, %(goalName)s, %(goalDescription)s, %(goalCategory)s, %(goalStatus)s, %(targetDate)s, %(progress)s, %(goalIcon)s);"""
         return MysqlConnection("habitUp").query_start(query, data)
 
     @classmethod
@@ -30,7 +31,7 @@ class Goal:
     @classmethod
     def updateGoal(cls, data):
         query = """UPDATE goals SET goalName = %(goalName)s, goalDescription = %(goalDescription)s, goalCategory = %(goalCategory)s, 
-        goalStatus = %(goalStatus)s, targetDate = %(targetDate)s, progress = %(progress)s WHERE id = %(id)s;"""
+        goalStatus = %(goalStatus)s, targetDate = %(targetDate)s, progress = %(progress)s, goalIcon = %(goalIcon)s WHERE id = %(id)s;"""
         return MysqlConnection("habitUp").query_start(query, data)
 
     @classmethod
