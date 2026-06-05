@@ -61,12 +61,7 @@ class User:
             update_data["password"] = data["password"]
             password_fragment = ", password = %(password)s"
 
-        query = f"""
-        UPDATE users
-        SET username = %(username)s,
-            avatar = %(avatar)s{password_fragment}
-        WHERE id = %(id)s;
-        """
+        query = f"""UPDATE users SET username = %(username)s, avatar = %(avatar)s{password_fragment} WHERE id = %(id)s;"""
         return MysqlConnection("habitUp").query_start(query, update_data)
 
     @classmethod
@@ -75,20 +70,13 @@ class User:
             "id": data["id"],
             "avatar": cls.normalizeAvatar(data.get("avatar")),
         }
-        query = """
-        UPDATE users
-        SET avatar = %(avatar)s
-        WHERE id = %(id)s;
-        """
+        query = """UPDATE users SET avatar = %(avatar)s WHERE id = %(id)s;"""
         return MysqlConnection("habitUp").query_start(query, update_data)
 
     @classmethod
     def usernameExists(cls, username, exclude_user_id=None):
         params = {"username": str(username or "").strip().lower()}
-        query = """
-        SELECT id FROM users
-        WHERE LOWER(username) = %(username)s
-        """
+        query = """SELECT id FROM users WHERE LOWER(username) = %(username)s"""
 
         if exclude_user_id is not None:
             query += " AND id != %(exclude_user_id)s"

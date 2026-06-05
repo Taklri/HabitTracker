@@ -11,9 +11,11 @@ class Habit:
         self.habitFrequency = data["habitFrequency"]
         self.habitWeekly = data["habitWeekly"]
         self.habitMonthly = data["habitMonthly"]
-        self.habitIcon = data.get("habitIcon", "📋") 
+        self.habitStatus = data.get("habitstatus") or data.get("habitStatus")
+        self.habitIcon = data.get("habitIcon")
+        self.created_at = data.get("created_at") or data.get("createdAt")
 
-    # methods exclusive for habit schema
+    # methods
     @classmethod
     def insertHabit(cls, data):
         query = """INSERT INTO habit (userId, habitName, habitCategory, habitDescription, habitFrequency, habitWeekly, habitMonthly, habitIcon) 
@@ -45,7 +47,7 @@ class Habit:
     
     @classmethod
     def editHabit(cls, data):
-        query = """UPDATE habit SET habitName = %(habitName)s, habitCategory = %(habitCategory)s, habitDescription = %(habitDescription)s, habitFrequency = %(habitFrequency)s, habitWeekly = %(habitWeekly)s, habitMonthly = %(habitMonthly)s, habitIcon = %(habitIcon)s WHERE id = %(id)s;"""
+        query = """UPDATE habit SET habitName = %(habitName)s, habitCategory = %(habitCategory)s, habitDescription = %(habitDescription)s, habitFrequency = %(habitFrequency)s, habitWeekly = %(habitWeekly)s, habitMonthly = %(habitMonthly)s, habitIcon = %(habitIcon)s, habitstatus = %(habitStatus)s WHERE id = %(id)s;"""
         return MysqlConnection("habitUp").query_start(query, data)
 
     @classmethod
@@ -68,11 +70,7 @@ class Habit:
             "userId": user_id,
             "habitName": str(habit_name or "").strip().lower(),
         }
-        query = """
-        SELECT id FROM habit
-        WHERE userId = %(userId)s
-          AND LOWER(habitName) = %(habitName)s
-        """
+        query = """SELECT id FROM habit WHERE userId = %(userId)s AND LOWER(habitName) = %(habitName)s"""
 
         if exclude_habit_id is not None:
             query += " AND id != %(exclude_habit_id)s"
@@ -81,3 +79,18 @@ class Habit:
         query += " LIMIT 1;"
         result = MysqlConnection("habitUp").query_start(query, params)
         return len(result) > 0
+    
+    @classmethod
+    def searchHabits(cls, user_id, search):
+        normalized_search = str(search or "").lower()
+        normalized_search = "".join(ch for ch in normalized_search if ch.isalnum())
+
+        all_habits = cls.getHabitsByUser(user_id)
+        habits = []
+
+        for habit in all_habits:
+            normalized_name = "".join(ch for ch in str(habit.habitName or "").lower() if ch.isalnum())
+            if normalized_search in normalized_name:
+                habits.append(habit)
+
+        return habits

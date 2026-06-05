@@ -30,6 +30,24 @@
                 <span class="text-xs font-mono text-zinc-400 bg-zinc-800 px-3 py-1 rounded-full">{{ goals|length }} goals</span>
             </div>
 
+            <form action="/all-goals" method="GET" class="mb-6 flex flex-wrap items-center gap-3">
+                <input type="text" name="search" value="{{ request.args.get('search','') }}" placeholder="Search goals..." class="w-full sm:w-64 p-3 rounded-full bg-zinc-800 text-zinc-400 placeholder:text-zinc-500 border border-zinc-700" />
+                <select name="category" class="p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-300">
+                    <option value="">All categories</option>
+                    <option value="health" {% if request.args.get('category','')=='health' %}selected{% endif %}>Health</option>
+                    <option value="productivity" {% if request.args.get('category','')=='productivity' %}selected{% endif %}>Productivity</option>
+                    <option value="finance" {% if request.args.get('category','')=='finance' %}selected{% endif %}>Finance</option>
+                    <option value="learning" {% if request.args.get('category','')=='learning' %}selected{% endif %}>Learning</option>
+                    <option value="fitness" {% if request.args.get('category','')=='fitness' %}selected{% endif %}>Fitness</option>
+                    <option value="personal" {% if request.args.get('category','')=='personal' %}selected{% endif %}>Personal</option>
+                </select>
+                
+                <label class="text-zinc-400 text-sm">Due</label>
+                <input type="date" name="due" value="{{ request.args.get('due','') }}" class="p-2 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-300" />
+                <button type="submit" class="px-4 py-2 rounded-lg bg-blue-600 text-white">Filter</button>
+                <a href="/all-goals" class="text-sm text-zinc-400">Reset</a>
+            </form>
+
             <div class="space-y-3">
                 {% if goals %}
                     {% for goal in goals %}
@@ -48,12 +66,20 @@
                                 {% if goal.goalDescription %}
                                 <p class="mt-3 text-sm text-zinc-400">{{ goal.goalDescription }}</p>
                                 {% endif %}
+                                <div class="mt-3 flex items-center gap-3">
+                                    <a href="/edit-goal/{{ goal.id }}" class="inline-block text-sm text-blue-300 hover:underline">Edit</a>
+                                    <form action="/done-goal/{{ goal.id }}" method="POST" class="inline-block">
+                                        <button type="submit" class="text-sm bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg">Done</button>
+                                    </form>
+                                    <form action="/delete-goal/{{ goal.id }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this goal?');">
+                                        <button type="submit" class="text-sm bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button>
+                                    </form>
+                                </div>
                             </div>
                             <span class="inline-flex shrink-0 items-center rounded-full border border-blue-400/20 bg-blue-400/10 px-2.5 py-0.5 text-xs font-mono font-medium capitalize text-blue-400">{{ goal.goalCategory }}</span>
                         </div>
                         <div class="mt-4 flex flex-wrap items-center gap-2 text-xs text-zinc-400">
                             <span class="rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1 capitalize">{{ goal.goalStatus }}</span>
-                            <span class="rounded-full border border-zinc-700 bg-zinc-900/70 px-2.5 py-1">Progress {{ goal.progress }}%</span>
                         </div>
                     </article>
                     {% endfor %}

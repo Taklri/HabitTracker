@@ -19,7 +19,6 @@
   </head>
   <body class="min-h-screen bg-zinc-900 text-zinc-100">
 
-    <!-- NAV -->
     <nav class="sticky top-0 z-50 bg-zinc-900/90 backdrop-blur-xl border-b border-zinc-800">
       <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
@@ -35,10 +34,8 @@
       </div>
     </nav>
 
-    <!-- MAIN -->
     <main class="max-w-xl mx-auto px-6 py-12">
 
-      <!-- Page Title -->
       <div class="mb-8">
         <div class="flex items-center gap-2.5 mb-3">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
@@ -54,19 +51,16 @@
       </div>
       {% endif %}
 
-      <!-- Form -->
       <form action="/edit-habit/{{ habit.id }}" method="POST" class="space-y-5">
 
-        <!-- Habit Name -->
         <div class="space-y-1.5">
           <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Habit Name <span class="text-emerald-400 normal-case tracking-normal">*</span></label>
           <input type="text" name="habitName" value="{{ habit.habitName }}" required
             class="w-full bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 text-zinc-100 text-sm rounded-xl px-4 py-3 outline-none transition-all" />
         </div>
 
-        <!-- 2-col row -->
         <div class="grid grid-cols-2 gap-4">
-          <!-- Category -->
+          
           <div class="space-y-1.5">
             <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Category <span class="text-emerald-400 normal-case tracking-normal">*</span></label>
             <select name="habitCategory" required
@@ -82,27 +76,25 @@
             </select>
           </div>
 
-          <!-- Frequency -->
           <div class="space-y-1.5">
             <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Frequency <span class="text-emerald-400 normal-case tracking-normal">*</span></label>
             <select name="habitFrequency" id="freq-select" required
               class="w-full appearance-none bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 text-zinc-100 text-sm rounded-xl px-4 py-3 outline-none transition-all cursor-pointer"
               style="background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%2371717a' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 9l6 6 6-6'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 12px center;">
-              <option value="daily"   {% if habit.habitFrequency == 'daily' %}selected{% endif %}>Daily</option>
-              <option value="weekly"  {% if habit.habitFrequency == 'weekly' %}selected{% endif %}>Weekly</option>
-              <option value="monthly" {% if habit.habitFrequency == 'monthly' %}selected{% endif %}>Monthly</option>
+              <option value="daily"   {% if habit.habitFrequency == 'daily' %}selected{% endif %}>Daily (Every day)</option>
+              <option value="weekly"  {% if habit.habitFrequency == 'weekly' %}selected{% endif %}>Weekly (pick one day)</option>
+              <option value="multiday"{% if habit.habitFrequency == 'multiday' %}selected{% endif %}>Multi-day (pick multiple days)</option>
+              <option value="monthly" {% if habit.habitFrequency == 'monthly' %}selected{% endif %}>Monthly (pick a date)</option>
             </select>
           </div>
         </div>
 
-        <!-- Description -->
         <div class="space-y-1.5">
           <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Description</label>
           <textarea name="habitDescription" rows="3"
             class="w-full bg-zinc-800 border border-zinc-700 hover:border-zinc-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 text-zinc-100 text-sm rounded-xl px-4 py-3 outline-none transition-all resize-none">{{ habit.habitDescription }}</textarea>
         </div>
 
-        <!-- Icon Picker (conditional by category) -->
         <div class="space-y-1.5">
           <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Icon</label>
           <div id="icon-grid" class="grid grid-cols-6 gap-2">
@@ -110,11 +102,11 @@
           <input type="hidden" name="habitIcon" id="habitIcon" value="{{ habit.habitIcon }}" />
         </div>
 
-        <!-- Weekly Days (conditional) -->
         <div id="weekly-days" class="hidden space-y-3 bg-zinc-800 border border-zinc-700/60 rounded-xl p-4">
           <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Select Days</label>
           <div class="grid grid-cols-2 gap-2">
-            {% for day in ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'] %}
+            {% set days = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'] %}
+            {% for day in days %}
             <label class="flex items-center gap-3 cursor-pointer group/day">
               <input type="checkbox" name="weeklyDays" value="{{ day }}"
                 {% if habit.habitWeekly and day in habit.habitWeekly %}checked{% endif %}
@@ -125,7 +117,6 @@
           </div>
         </div>
 
-        <!-- Monthly Day (conditional) -->
         <div id="monthly-options" class="hidden space-y-1.5">
           <label class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Day of Month</label>
           <input id="monthlyDay" type="number" name="monthlyDay" min="1" max="31" value="{{ habit.habitMonthly or 1 }}"
@@ -134,7 +125,6 @@
           <p class="text-xs text-zinc-600">Which day of the month should this repeat?</p>
         </div>
 
-        <!-- Buttons -->
         <div class="flex gap-3 pt-4 border-t border-zinc-800">
           <button type="submit"
             class="flex-1 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-sm font-semibold px-6 py-3 rounded-xl transition-all hover:-translate-y-0.5 shadow-lg shadow-emerald-500/20">
@@ -159,10 +149,28 @@
 
         function updateBlocks() {
           const v = freqSelect.value;
-          weeklyBlock.classList.toggle('hidden', v !== 'weekly');
+          weeklyBlock.classList.toggle('hidden', !(v === 'weekly' || v === 'multiday'));
           monthlyBlock.classList.toggle('hidden', v !== 'monthly');
           if (monthlyDay) monthlyDay.disabled = v !== 'monthly';
           if (v !== 'monthly' && monthlyError) monthlyError.classList.add('hidden');
+          enforceWeeklySelectionMode(v);
+        }
+
+        function enforceWeeklySelectionMode(mode) {
+          const checks = weeklyBlock.querySelectorAll('input[type="checkbox"][name="weeklyDays"]');
+          checks.forEach((cb) => {
+            cb.removeEventListener('change', singleSelectHandler);
+            cb.addEventListener('change', singleSelectHandler);
+          });
+
+          function singleSelectHandler(e) {
+            if (mode === 'weekly' && e.target.checked) {
+              // uncheck all others
+              checks.forEach((other) => {
+                if (other !== e.target) other.checked = false;
+              });
+            }
+          }
         }
 
         function validateMonthly() {

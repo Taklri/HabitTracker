@@ -15,105 +15,25 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ["DM Sans", "sans-serif"],
-              mono: ["DM Mono", "monospace"],
-            },
-            colors: {
-              zinc: {
-                750: "#2d2d2d",
-                850: "#1f1f1f",
-                925: "#161616",
-              },
-            },
-            keyframes: {
-              cardIn: {
-                "0%": { opacity: "0", transform: "translateY(10px)" },
-                "100%": { opacity: "1", transform: "translateY(0)" },
-              },
-            },
-            animation: {
-              "card-in": "cardIn 0.3s ease forwards",
-            },
-          },
-        },
-      };
-      function confirmDeletion() {
-        return confirm("Delete this item?");
-      }
+   
 
-      function formatSectionCount(count) {
-        return count === 1 ? "1 item" : `${count} items`;
-      }
-    </script>
-    <style>
-      body {
-        font-family: "DM Sans", sans-serif;
-      }
-      .card-delay-1 {
-        animation-delay: 0.05s;
-        opacity: 0;
-      }
-      .card-delay-2 {
-        animation-delay: 0.1s;
-        opacity: 0;
-      }
-      .card-delay-3 {
-        animation-delay: 0.15s;
-        opacity: 0;
-      }
-      .card-delay-4 {
-        animation-delay: 0.2s;
-        opacity: 0;
-      }
-      .card-delay-5 {
-        animation-delay: 0.25s;
-        opacity: 0;
-      }
-      .card-delay-6 {
-        animation-delay: 0.3s;
-        opacity: 0;
-      }
-      select option {
-        background: #27272a;
-        color: #f4f4f5;
-      }
-      ::-webkit-scrollbar {
-        width: 5px;
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #3f3f46;
-        border-radius: 999px;
-      }
-    </style>
   </head>
 
   <body
     class="min-h-screen bg-zinc-900 text-zinc-100"
     style="font-family: 'DM Sans', sans-serif"
   >
-    <!-- NAV -->
     <nav
       class="sticky top-0 z-50 bg-zinc-900/90 backdrop-blur-xl border-b border-zinc-800"
     >
       <div
         class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between"
       >
-        <!-- Logo -->
         <div class="flex items-center gap-2.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span>
           <span class="text-base font-semibold tracking-tight text-zinc-100"
             >HabitUp</span
           >
         </div>
-        <!-- Right -->
         <div class="flex items-center gap-4">
           <a href="/profile" class="inline-flex items-center gap-2 rounded-full border border-zinc-700 px-3 py-1.5 text-sm font-mono text-zinc-300 transition hover:border-zinc-600 hover:text-zinc-100">
             <span class="text-zinc-400">hey,</span>
@@ -131,9 +51,8 @@
       </div>
     </nav>
 
-    <!-- MAIN -->
     <main class="max-w-6xl mx-auto px-6 py-10 sm:py-12">
-      <!-- Today Header -->
+      
       <section
         class="mb-10 rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-850 via-zinc-900 to-zinc-950 p-6 sm:p-8 shadow-2xl shadow-black/20"
       >
@@ -142,9 +61,6 @@
         >
           <div>
             <div class="flex items-center gap-2.5 mb-3">
-              <span
-                class="w-2 h-2 rounded-full bg-emerald-400 inline-block"
-              ></span>
               <span
                 class="text-xs font-medium tracking-[0.3em] uppercase text-zinc-500"
                 >Today</span
@@ -219,7 +135,6 @@
       </section>
 
       <div class="mb-14 grid grid-cols-1 gap-6 xl:grid-cols-2 xl:gap-8">
-      <!-- ═══ HABITS SECTION ═══ -->
       <section>
         <div
           class="flex items-center justify-between mb-5 pb-3 border-b border-zinc-800"
@@ -292,6 +207,14 @@
             </div>
 
             <div class="mt-4 flex gap-2 border-t border-zinc-700/50 pt-4">
+              <form action="/done-habit/{{ habit.id }}" method="POST">
+                <button
+                  type="submit"
+                  class="inline-flex rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-400 transition-all hover:border-emerald-400/50 hover:bg-emerald-500/20 hover:text-emerald-300"
+                >
+                  Done
+                </button>
+              </form>
               <a
                 href="/edit-habit/{{ habit.id }}"
                 class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-700 hover:text-zinc-100"
@@ -347,7 +270,6 @@
         </div>
       </section>
 
-      <!-- ═══ GOALS SECTION ═══ -->
       <section>
         <div
           class="flex items-center justify-between mb-5 pb-3 border-b border-zinc-800"
@@ -434,6 +356,14 @@
             </div>
 
             <div class="mt-4 flex gap-2 border-t border-zinc-700/50 pt-4">
+              <form action="/done-goal/{{ goal.id }}" method="POST">
+                <button
+                  type="submit"
+                  class="inline-flex rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-xs font-semibold text-blue-400 transition-all hover:border-blue-400/50 hover:bg-blue-500/20 hover:text-blue-300"
+                >
+                  Done
+                </button>
+              </form>
               <a
                 href="/edit-goal/{{ goal.id }}"
                 class="inline-flex rounded-lg border border-zinc-700/60 bg-zinc-700/40 px-3 py-2 text-xs font-semibold text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-700 hover:text-zinc-100"
@@ -488,7 +418,6 @@
       </section>
       </div>
 
-      <!-- ═══ ALL HABITS SECTION ═══ -->
       <section class="mb-14">
         <div
           class="flex items-center justify-between mb-5 pb-3 border-b border-zinc-800"
@@ -632,7 +561,6 @@
         </div>
       </section>
 
-      <!-- ═══ ALL GOALS SECTION ═══ -->
       <section>
         <div
           class="flex items-center justify-between mb-5 pb-3 border-b border-zinc-800"

@@ -30,6 +30,28 @@
                 <span class="text-xs font-mono text-zinc-400 bg-zinc-800 px-3 py-1 rounded-full">{{ habits|length }} habits</span>
             </div>
 
+            <form action="/all-habits" method="GET" class="mb-6 flex flex-wrap items-center gap-3">
+                <input type="text" name="search" value="{{ request.args.get('search','') }}" placeholder="Search habits..." class="w-full sm:w-64 p-3 rounded-full bg-zinc-800 text-zinc-400 placeholder:text-zinc-500 border border-zinc-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" />
+                <select name="frequency" class="p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-300">
+                    <option value="">All frequency</option>
+                    <option value="daily" {% if request.args.get('frequency')=='daily' %}selected{% endif %}>Daily</option>
+                    <option value="weekly" {% if request.args.get('frequency')=='weekly' %}selected{% endif %}>Weekly</option>
+                    <option value="multiday" {% if request.args.get('frequency')=='multiday' %}selected{% endif %}>Multi-day</option>
+                    <option value="monthly" {% if request.args.get('frequency')=='monthly' %}selected{% endif %}>Monthly</option>
+                </select>
+                <select name="category" class="p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-300">
+                    <option value="">All categories</option>
+                    <option value="health" {% if request.args.get('category','')=='health' %}selected{% endif %}>Health</option>
+                    <option value="productivity" {% if request.args.get('category','')=='productivity' %}selected{% endif %}>Productivity</option>
+                    <option value="finance" {% if request.args.get('category','')=='finance' %}selected{% endif %}>Finance</option>
+                    <option value="learning" {% if request.args.get('category','')=='learning' %}selected{% endif %}>Learning</option>
+                    <option value="fitness" {% if request.args.get('category','')=='fitness' %}selected{% endif %}>Fitness</option>
+                    <option value="personal" {% if request.args.get('category','')=='personal' %}selected{% endif %}>Personal</option>
+                </select>
+                <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 text-white">Filter</button>
+                <a href="/all-habits" class="text-sm text-zinc-400">Reset</a>
+            </form>
+
             <div class="space-y-3">
                 {% if habits %}
                     {% for habit in habits %}
@@ -48,6 +70,15 @@
                                 {% if habit.habitDescription %}
                                 <p class="mt-3 text-sm text-zinc-400">{{ habit.habitDescription }}</p>
                                 {% endif %}
+                                <div class="mt-3 flex items-center gap-3">
+                                    <a href="/edit-habit/{{ habit.id }}" class="inline-block text-sm text-emerald-300 hover:underline">Edit</a>
+                                    <form action="/done-habit/{{ habit.id }}" method="POST" class="inline-block">
+                                        <button type="submit" class="text-sm bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg">Done</button>
+                                    </form>
+                                    <form action="/delete-habit/{{ habit.id }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this habit?');">
+                                        <button type="submit" class="text-sm bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button>
+                                    </form>
+                                </div>
                             </div>
                             <span class="inline-flex shrink-0 items-center rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-0.5 text-xs font-mono font-medium capitalize text-emerald-400">{{ habit.habitCategory }}</span>
                         </div>
@@ -58,7 +89,7 @@
                     </article>
                     {% endfor %}
                 {% else %}
-                    <div class="rounded-2xl border border-dashed border-zinc-700 bg-zinc-800/40 py-16 text-center text-zinc-500">No habits added yet.</div>
+                    <div class="rounded-2xl border border-dashed border-zinc-700 bg-zinc-800/40 py-16 text-center text-zinc-500">{% if search_query %}No habits match "{{ search_query }}".{% else %}No habits added yet.{% endif %}</div>
                 {% endif %}
             </div>
         </main>

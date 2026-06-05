@@ -1,61 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HabitUp — Sign Up</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'DM Sans', sans-serif; }
+  </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-stone-100 via-emerald-50 to-stone-200 text-slate-800 flex items-center justify-center px-4">
-    <main class="w-full max-w-md rounded-3xl border border-stone-200 bg-white/95 p-8 shadow-2xl shadow-slate-900/10 backdrop-blur">
-        <h1 class="text-3xl font-bold tracking-tight text-slate-900">Create account</h1>
-        <p class="mt-2 text-sm text-slate-500">Sign up to start tracking your habits.</p>
-        {% if error %}
-        <p class="mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ error }}</p>
-        {% endif %}
+<body class="min-h-screen bg-zinc-900 text-zinc-100 flex items-center justify-center px-4 py-12">
 
-        <form action="/signup/process" method="POST" class="mt-8 space-y-5">
-            <div>
-                <label for="username" class="mb-2 block text-sm font-semibold text-slate-700">Username</label>
-                <input id="username" name="username" type="text" placeholder="Choose a username" required class="w-full rounded-xl border border-stone-300 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10">
-            </div>
+  <main class="w-full max-w-sm">
 
-            <div>
-                <label for="email" class="mb-2 block text-sm font-semibold text-slate-700">Email</label>
-                <input id="email" name="email" type="email" placeholder="Enter your email" required class="w-full rounded-xl border border-stone-300 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10">
-            </div>
+    <div class="flex items-center justify-center gap-2 mb-10">
+      <span class="text-4xl font-bold tracking-tight text-zinc-100">HabitUp</span>
+    </div>
 
-            <div>
-                <label for="password" class="mb-2 block text-sm font-semibold text-slate-700">Password</label>
-                <input id="password" name="password" type="password" placeholder="Create a password" required class="w-full rounded-xl border border-stone-300 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10">
-            </div>
+    <div class="bg-zinc-800 border border-zinc-700/60 rounded-2xl p-8 shadow-xl shadow-black/30">
 
-              <div>
-                <label for="re-enter_password" class="mb-2 block text-sm font-semibold text-slate-700">Re-enter Password</label>
-                <input id="re-enter_password" name="reenterpass" type="password" placeholder="Re-enter password" required class="w-full rounded-xl border border-stone-300 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10">
-            </div>
+      <h1 class="text-xl font-semibold tracking-tight text-zinc-100">Create account</h1>
+      <p class="mt-1 text-sm text-zinc-500">Start building better habits today.</p>
 
-            <div>
-                <p class="mb-2 block text-sm font-semibold text-slate-700">Choose Profile Icon</p>
-                <div class="grid grid-cols-5 gap-2">
-                    {% for avatar in allowed_avatars %}
-                    <label class="cursor-pointer">
-                        <input type="radio" name="avatar" value="{{ avatar }}" class="peer sr-only" {% if avatar == default_avatar %}checked{% endif %}>
-                        <span class="block rounded-xl border border-stone-300 p-2 transition peer-checked:border-emerald-600 peer-checked:ring-4 peer-checked:ring-emerald-600/10 hover:border-emerald-400">
-                            <img src="/avatars/{{ avatar }}.png" alt="{{ avatar }} avatar" class="mx-auto h-10 w-10 object-contain">
-                        </span>
-                    </label>
-                    {% endfor %}
-                </div>
-            </div>
+      {% if error %}
+      <div class="mt-4 flex items-start gap-2.5 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl px-4 py-3">
+        <svg class="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        </svg>
+        <span>{{ error }}</span>
+      </div>
+      {% endif %}
 
-            <button type="submit" class="w-full rounded-xl bg-emerald-700 px-4 py-3 font-semibold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-600/20">Sign Up</button>
-        </form>
+      <form id="signup-form" action="/signup/process" method="POST" class="mt-7 space-y-4" novalidate>
 
-        <p class="mt-6 text-center text-sm text-slate-500">
-            Already have an account?
-            <a href="/" class="font-semibold text-emerald-700 hover:text-emerald-800">Log in</a>
-        </p>
-    </main>
+        <div class="space-y-1.5">
+          <label for="username" class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Username</label>
+          <input id="username" name="username" type="text" required
+            class="w-full bg-zinc-900 border border-zinc-700 hover:border-zinc-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 text-zinc-100 text-sm placeholder-zinc-600 rounded-xl px-4 py-3 outline-none transition-all" />
+        </div>
+
+        <div class="space-y-1.5">
+          <label for="password" class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Password</label>
+          <input id="password" name="password" type="password" minlength="8" required
+            class="w-full bg-zinc-900 border border-zinc-700 hover:border-zinc-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 text-zinc-100 text-sm placeholder-zinc-600 rounded-xl px-4 py-3 outline-none transition-all" />
+          <p id="password-feedback" class="text-xs text-zinc-500">Use at least 8 characters.</p>
+        </div>
+
+        <div class="space-y-1.5">
+          <label for="re-enter_password" class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Confirm Password</label>
+          <input id="re-enter_password" name="reenterpass" type="password" required
+            class="w-full bg-zinc-900 border border-zinc-700 hover:border-zinc-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 text-zinc-100 text-sm placeholder-zinc-600 rounded-xl px-4 py-3 outline-none transition-all" />
+          <p id="confirm-feedback" class="text-xs text-zinc-500">Passwords must match.</p>
+        </div>
+
+        <div class="space-y-2.5 pt-1">
+          <p class="block text-xs font-medium tracking-wide uppercase text-zinc-500">Profile Icon</p>
+          <div class="grid grid-cols-5 gap-2">
+            {% for avatar in allowed_avatars %}
+            <label class="cursor-pointer">
+              <input type="radio" name="avatar" value="{{ avatar }}" class="peer sr-only"
+                {% if avatar == default_avatar %}checked{% endif %} />
+              <span class="flex items-center justify-center rounded-xl border border-zinc-700 p-2 transition-all
+                peer-checked:border-emerald-500 peer-checked:ring-2 peer-checked:ring-emerald-500/20 peer-checked:bg-emerald-500/5
+                hover:border-zinc-500 cursor-pointer">
+                <img src="/avatars/{{ avatar }}.png" alt="{{ avatar }}" class="w-9 h-9 object-contain" />
+              </span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <button type="submit"
+          id="submit-button"
+          class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-sm font-semibold py-3 rounded-xl transition-all hover:-translate-y-0.5 shadow-lg shadow-emerald-500/20 mt-2">
+          Create Account
+        </button>
+
+      </form>
+    </div>
+
+    <p class="mt-5 text-center text-sm text-zinc-500">
+      Already have an account?
+      <a href="/" class="font-semibold text-emerald-400 hover:text-emerald-300 transition-colors">Log in</a>
+    </p>
+
+  </main>
+
+  <script>
+    const form = document.getElementById('signup-form');
+    const passwordInput = document.getElementById('password');
+    const confirmInput = document.getElementById('re-enter_password');
+    const passwordFeedback = document.getElementById('password-feedback');
+    const confirmFeedback = document.getElementById('confirm-feedback');
+    const submitButton = document.getElementById('submit-button');
+
+    const validBorderClasses = ['border-emerald-500', 'focus:border-emerald-500', 'focus:ring-emerald-500/30'];
+    const invalidBorderClasses = ['border-red-500', 'focus:border-red-500', 'focus:ring-red-500/30'];
+
+    function setFieldState(input, messageElement, isValid, message) {
+      input.classList.remove(...validBorderClasses, ...invalidBorderClasses);
+      input.classList.add(isValid ? 'border-emerald-500' : 'border-red-500');
+      input.classList.add(isValid ? 'focus:border-emerald-500' : 'focus:border-red-500');
+      input.classList.add(isValid ? 'focus:ring-emerald-500/30' : 'focus:ring-red-500/30');
+      messageElement.textContent = message;
+      messageElement.className = `text-xs ${isValid ? 'text-emerald-400' : 'text-red-400'}`;
+    }
+
+    function validatePasswords() {
+      const password = passwordInput.value;
+      const confirmPassword = confirmInput.value;
+      const passwordLengthValid = password.length >= 8;
+      const passwordsMatch = password && confirmPassword && password === confirmPassword;
+
+      if (!password) {
+        setFieldState(passwordInput, passwordFeedback, false, 'Use at least 8 characters.');
+      } else if (passwordLengthValid) {
+        setFieldState(passwordInput, passwordFeedback, true, 'Password length looks good.');
+      } else {
+        setFieldState(passwordInput, passwordFeedback, false, 'Password must be at least 8 characters.');
+      }
+
+      if (!confirmPassword) {
+        confirmInput.setCustomValidity('');
+        setFieldState(confirmInput, confirmFeedback, false, 'Passwords must match.');
+      } else if (passwordsMatch) {
+        confirmInput.setCustomValidity('');
+        setFieldState(confirmInput, confirmFeedback, true, 'Passwords match.');
+      } else {
+        confirmInput.setCustomValidity('Passwords do not match');
+        setFieldState(confirmInput, confirmFeedback, false, 'Passwords do not match.');
+      }
+
+      submitButton.disabled = !(passwordLengthValid && passwordsMatch);
+      submitButton.classList.toggle('opacity-50', submitButton.disabled);
+      submitButton.classList.toggle('cursor-not-allowed', submitButton.disabled);
+    }
+
+    passwordInput.addEventListener('input', validatePasswords);
+    confirmInput.addEventListener('input', validatePasswords);
+    form.addEventListener('submit', (event) => {
+      validatePasswords();
+      if (!form.checkValidity()) {
+        event.preventDefault();
+      }
+    });
+
+    validatePasswords();
+  </script>
 </body>
 </html>

@@ -11,18 +11,16 @@ from models.goal import Goal
 
 AVATAR_FOLDER = os.path.join(app.root_path, "avatars")
 
-
-def _allowed_avatars():
+def allowedAvatars():
     return sorted(User.ALLOWED_AVATARS)
 
-
-def _sanitize_avatar(value):
+def checkAvatar(value):
     return User.normalizeAvatar(value)
 
 
 @app.route("/avatars/<avatar_name>.png")
 def serveAvatar(avatar_name):
-    avatar = _sanitize_avatar(avatar_name)
+    avatar = checkAvatar(avatar_name)
     return send_from_directory(AVATAR_FOLDER, f"{avatar}.png")
 
 @app.route('/')
@@ -43,7 +41,7 @@ def loginProcess():
     if user:
         session["user_id"] = user.id
         session["username"] = user.username
-        session["avatar"] = _sanitize_avatar(user.avatar)
+        session["avatar"] = checkAvatar(user.avatar)
         return redirect(url_for('dashboard'))
     else:
         return render_template("login.html", error="Invalid credentials")
@@ -52,7 +50,7 @@ def loginProcess():
 def signupPage():
     return render_template(
         "signup.html",
-        allowed_avatars=_allowed_avatars(),
+        allowed_avatars=allowedAvatars(),
         default_avatar=User.DEFAULT_AVATAR,
     )
 
@@ -61,7 +59,7 @@ def signupProcess():
     username = request.form.get("username", "").strip()
     password = request.form.get("password", "")
     reenterpass = request.form.get("reenterpass", "")
-    selected_avatar = _sanitize_avatar(request.form.get("avatar"))
+    selected_avatar = checkAvatar(request.form.get("avatar"))
 
     newUser={
         "username": username,
@@ -73,7 +71,7 @@ def signupProcess():
         return render_template(
             "signup.html",
             error="Username cannot be blank",
-            allowed_avatars=_allowed_avatars(),
+            allowed_avatars=allowedAvatars(),
             default_avatar=selected_avatar,
         )
 
@@ -81,7 +79,7 @@ def signupProcess():
         return render_template(
             "signup.html",
             error="Username already exists",
-            allowed_avatars=_allowed_avatars(),
+            allowed_avatars=allowedAvatars(),
             default_avatar=selected_avatar,
         )
 
@@ -89,7 +87,7 @@ def signupProcess():
         return render_template(
             "signup.html",
             error=f"Password must be at least {User.MIN_PASSWORD_LENGTH} characters",
-            allowed_avatars=_allowed_avatars(),
+            allowed_avatars=allowedAvatars(),
             default_avatar=selected_avatar,
         )
 
@@ -97,7 +95,7 @@ def signupProcess():
         return render_template(
             "signup.html",
             error="Passwords do not match",
-            allowed_avatars=_allowed_avatars(),
+            allowed_avatars=allowedAvatars(),
             default_avatar=newUser["avatar"],
         )
     else:
@@ -117,8 +115,41 @@ def profilePage():
     return render_template(
         "profile.html",
         username=user.username,
-        selected_avatar=_sanitize_avatar(user.avatar),
-        allowed_avatars=_allowed_avatars(),
+        selected_avatar=checkAvatar(user.avatar),
+        allowed_avatars=allowedAvatars(),
+    )
+
+
+@app.route("/update-avatar", methods=["POST"])
+def updateAvatar():
+    if "user_id" not in session:
+        return redirect("/login")
+
+    avatar = request.form.get("avatar")
+    if not avatar:
+        return redirect("/profile")
+
+    # call model (expects dict)
+    res = User.updateAvatar({"id": session["user_id"], "avatar": avatar})
+    if res is False:
+        user = User.getUserById({"id": session["user_id"]})
+        return render_template(
+            "profile.html",
+            username=user.username,
+            selected_avatar=checkAvatar(user.avatar),
+            allowed_avatars=allowedAvatars(),
+            error="Failed to update avatar",
+        )
+
+    # success — normalize then update session
+    session["avatar"] = checkAvatar(avatar)
+    user = User.getUserById({"id": session["user_id"]})
+    return render_template(
+        "profile.html",
+        username=user.username,
+        selected_avatar=checkAvatar (user.avatar),
+        allowed_avatars=allowedAvatars(),
+        success="Avatar updated",
     )
 
 
@@ -130,7 +161,7 @@ def profileProcess():
     username = request.form.get("username", "").strip()
     new_password = request.form.get("password", "")
     reenter_password = request.form.get("reenterpass", "")
-    avatar = _sanitize_avatar(request.form.get("avatar"))
+    avatar = checkAvatar(request.form.get("avatar"))
 
     if not username:
         user = User.getUserById({"id": session["user_id"]})
@@ -138,7 +169,7 @@ def profileProcess():
             "profile.html",
             username=session.get("username"),
             selected_avatar=avatar,
-            allowed_avatars=_allowed_avatars(),
+            allowed_avatars=allowedAvatars(),
             error="Username cannot be blank",
         )
 
@@ -147,7 +178,7 @@ def profileProcess():
             "profile.html",
             username=username,
             selected_avatar=avatar,
-            allowed_avatars=_allowed_avatars(),
+            allowed_avatars=allowedAvatars(),
             error="Username already exists",
         )
 
@@ -156,7 +187,7 @@ def profileProcess():
             "profile.html",
             username=username,
             selected_avatar=avatar,
-            allowed_avatars=_allowed_avatars(),
+            allowed_avatars=allowedAvatars(),
             error=f"Password must be at least {User.MIN_PASSWORD_LENGTH} characters",
         )
 
@@ -165,7 +196,7 @@ def profileProcess():
             "profile.html",
             username=username,
             selected_avatar=avatar,
-            allowed_avatars=_allowed_avatars(),
+            allowed_avatars=allowedAvatars(),
             error="Passwords do not match",
         )
 
@@ -182,20 +213,20 @@ def profileProcess():
     return redirect("/profile")
 
 
-def _parse_csv_values(value):
+def parseCsvValues(value):
     if not value:
         return set()
     return {item.strip().lower() for item in str(value).split(",") if item.strip()}
 
 
-def _habit_is_for_today(habit, today):
+def habitIsForToday(habit, today):
     frequency = (getattr(habit, "habitFrequency", "") or "").lower()
 
     if frequency == "daily":
         return True
 
-    if frequency == "weekly":
-        return today.strftime("%A").lower() in _parse_csv_values(getattr(habit, "habitWeekly", None))
+    if frequency in {"weekly", "multiday"}:
+        return today.strftime("%A").lower() in parseCsvValues(getattr(habit, "habitWeekly", None))
 
     if frequency == "monthly":
         habit_day = getattr(habit, "habitMonthly", None)
@@ -207,7 +238,7 @@ def _habit_is_for_today(habit, today):
     return False
 
 
-def _habit_created_today(habit, today):
+def habitCreatedToday(habit, today):
     created_value = getattr(habit, "created_at", None) or getattr(habit, "createdAt", None)
     if not created_value:
         return False
@@ -216,11 +247,11 @@ def _habit_created_today(habit, today):
     return created_text[:10] == today.isoformat()
 
 
-def _goal_is_for_today(goal, today):
+def goalIsForToday(goal, today):
     return str(getattr(goal, "targetDate", "") or "")[:10] == today.isoformat()
 
 
-def _habit_schedule_label(habit):
+def habitScheduleLabel(habit):
     frequency = (getattr(habit, "habitFrequency", "") or "").lower()
 
     if frequency == "daily":
@@ -230,6 +261,10 @@ def _habit_schedule_label(habit):
         days = [day.strip().title() for day in str(getattr(habit, "habitWeekly", "") or "").split(",") if day.strip()]
         return "Weekly: " + ", ".join(days) if days else "Weekly"
 
+    if frequency == "multiday":
+        days = [day.strip().title() for day in str(getattr(habit, "habitWeekly", "") or "").split(",") if day.strip()]
+        return "Multiple days: " + ", ".join(days) if days else "Multiple days"
+
     if frequency == "monthly":
         day = getattr(habit, "habitMonthly", None)
         return f"Monthly: Day {day}" if day else "Monthly"
@@ -237,25 +272,35 @@ def _habit_schedule_label(habit):
     return frequency.title() if frequency else "Unspecified"
 
 
-def _habit_sort_key(habit):
+def habitSortKey(habit):
     created_value = getattr(habit, "created_at", None) or getattr(habit, "createdAt", None)
     if created_value:
         return str(created_value)
     return str(getattr(habit, "id", 0))
 
 
-def _goal_sort_key(goal):
+def goalSortKey(goal):
     return str(getattr(goal, "targetDate", "") or "")
 
 
-def _sorted_habits_for_user(user_id):
+def habitIsCompleted(habit):
+    status = str(getattr(habit, "habitStatus", "") or "").strip().lower()
+    return status in {"done", "completed"}
+
+
+def goalIsCompleted(goal):
+    status = str(getattr(goal, "goalStatus", "") or "").strip().lower()
+    return status == "completed"
+
+
+def sortedHabits(user_id):
     habits = Habit.getHabitsByUser(user_id)
-    return sorted(habits, key=_habit_sort_key)
+    return sorted(habits, key=habitSortKey)
 
 
-def _sorted_goals_for_user(user_id):
+def sortedGoals(user_id):
     goals = Goal.getGoalsByUser(user_id)
-    return sorted(goals, key=_goal_sort_key)
+    return sorted(goals, key=goalSortKey)
 
 @app.route("/dashboard")
 def dashboard():
@@ -269,32 +314,32 @@ def dashboard():
     selected_goal_category = request.args.get("goal_category", "").strip() or None
 
     if selected_habit_category:
-        all_habits = sorted(Habit.filterHabitsByCategory(user_id, selected_habit_category), key=_habit_sort_key)
+        all_habits = sorted(Habit.filterHabitsByCategory(user_id, selected_habit_category), key=habitSortKey)
     else:
-        all_habits = _sorted_habits_for_user(user_id)
+        all_habits = sortedHabits(user_id)
 
     if selected_goal_category:
-        all_goals = sorted(Goal.filterGoalsByCategory(user_id, selected_goal_category), key=_goal_sort_key)
+        all_goals = sorted(Goal.filterGoalsByCategory(user_id, selected_goal_category), key=goalSortKey)
     else:
-        all_goals = _sorted_goals_for_user(user_id)
+        all_goals = sortedGoals(user_id)
 
     todays_habits = [
         habit for habit in all_habits
-        if _habit_is_for_today(habit, today) or _habit_created_today(habit, today)
+        if (habitIsForToday(habit, today) or habitCreatedToday(habit, today)) and not habitIsCompleted(habit)
     ]
-    todays_goals = [goal for goal in all_goals if _goal_is_for_today(goal, today)]
+    todays_goals = [goal for goal in all_goals if goalIsForToday(goal, today) and not goalIsCompleted(goal)]
 
     return render_template(
         "dashboardSample.html",
         username=session["username"],
-        avatar=_sanitize_avatar(session.get("avatar")),
+        avatar=checkAvatar(session.get("avatar")),
         today=today,
         today_label=today.strftime("%A, %B %d, %Y"),
         habits=todays_habits,
         all_habits=all_habits,
         goals=todays_goals,
         all_goals=all_goals,
-        habit_schedule_label=_habit_schedule_label,
+        habit_schedule_label=habitScheduleLabel,
         selected_habit_category=selected_habit_category,
         selected_goal_category=selected_goal_category,
     )
@@ -304,28 +349,74 @@ def dashboard():
 def allHabits():
     if "user_id" not in session:
         return redirect("/login")
+    user_id = session["user_id"]
 
-    habits = _sorted_habits_for_user(session["user_id"])
+    # fetch all and then apply optional filters from query params
+    habits = sortedHabits(user_id)
+
+    search = (request.args.get("search") or "").strip().lower()
+    frequency = (request.args.get("frequency") or "").strip().lower()
+    category = (request.args.get("category") or "").strip().lower()
+
+    def match(h):
+        if search:
+            if search not in (str(getattr(h, "habitName", "") or "").lower()):
+                return False
+        if frequency:
+            if (getattr(h, "habitFrequency", "") or "").lower() != frequency:
+                return False
+        if category:
+            if (str(getattr(h, "habitCategory", "") or "").lower() != category):
+                return False
+        return True
+
+    filtered = [h for h in habits if match(h)]
+    # build category list for dropdown
+    habit_categories = sorted({(h.habitCategory or "").strip() for h in habits if (h.habitCategory or "").strip()})
+
     return render_template(
         "allHabit.html",
         username=session["username"],
-        avatar=_sanitize_avatar(session.get("avatar")),
-        habits=habits,
-        habit_schedule_label=_habit_schedule_label,
+        avatar=checkAvatar(session.get("avatar")),
+        habits=filtered,
+        habit_schedule_label=habitScheduleLabel,
+        habit_categories=habit_categories,
     )
-
 
 @app.route("/all-goals")
 def allGoals():
     if "user_id" not in session:
         return redirect("/login")
+    user_id = session["user_id"]
+    goals = sortedGoals(user_id)
 
-    goals = _sorted_goals_for_user(session["user_id"])
+    search = (request.args.get("search") or "").strip().lower()
+    category = (request.args.get("category") or "").strip().lower()
+    due = (request.args.get("due") or "").strip()
+
+    def match(g):
+        if search:
+            if search not in (str(getattr(g, "goalName", "") or "").lower()):
+                return False
+        if category:
+            if (str(getattr(g, "goalCategory", "") or "").lower() != category):
+                return False
+        if due:
+            # compare YYYY-MM-DD prefix
+            if str(getattr(g, "targetDate", "") or "")[:10] != due:
+                return False
+        return True
+
+    filtered = [g for g in goals if match(g)]
+    # build category list for dropdown
+    goal_categories = sorted({(g.goalCategory or "").strip() for g in goals if (g.goalCategory or "").strip()})
+
     return render_template(
         "allGoals.html",
         username=session["username"],
-        avatar=_sanitize_avatar(session.get("avatar")),
-        goals=goals,
+        avatar=checkAvatar(session.get("avatar")),
+        goals=filtered,
+        goal_categories=goal_categories,
     )
 
 #habits
@@ -350,7 +441,7 @@ def addHabitProcess():
     monthly_day = None
 
 
-    if habitFrequency == "weekly":
+    if habitFrequency in ("weekly", "multiday"):
         weekly_days = ",".join(request.form.getlist("weeklyDays")) or None
     elif habitFrequency == "monthly":
         monthly_day = request.form.get("monthlyDay") or None
@@ -384,6 +475,33 @@ def deleteHabit(habit_id):
     Habit.deleteHabit(habit_id)
     return redirect("/dashboard")
 
+
+@app.route("/done-habit/<int:habit_id>", methods=["POST"])
+def doneHabit(habit_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    habit = Habit.getHabitById(habit_id)
+    if not habit or habit.userId != session["user_id"]:
+        return redirect("/dashboard")
+
+    today = date.today()
+    if not (habitIsForToday(habit, today) or habitCreatedToday(habit, today)):
+        return redirect("/dashboard")
+
+    Habit.updateHabit({
+        "id": habit_id,
+        "habitName": habit.habitName,
+        "habitCategory": habit.habitCategory,
+        "habitDescription": habit.habitDescription,
+        "habitFrequency": habit.habitFrequency,
+        "habitWeekly": habit.habitWeekly,
+        "habitMonthly": habit.habitMonthly,
+        "habitIcon": habit.habitIcon,
+        "habitStatus": "done",
+    })
+    return redirect("/dashboard")
+
 @app.route("/edit-habit/<int:habit_id>", methods=["GET", "POST"])
 def editHabit(habit_id):
     if "user_id" not in session:
@@ -395,11 +513,16 @@ def editHabit(habit_id):
             return redirect("/dashboard")
         return render_template("editPageSample.html", habit=habit)
 
+    # load existing habit for POST and ensure ownership
+    habit = Habit.getHabitById(habit_id)
+    if not habit or habit.userId != session["user_id"]:
+        return redirect("/dashboard")
+
     habitFrequency = request.form.get("habitFrequency")
     weekly_days = None
     monthly_day = None
 
-    if habitFrequency == "weekly":
+    if habitFrequency in ("weekly", "multiday"):
         weekly_days = ",".join(request.form.getlist("weeklyDays")) or None
     elif habitFrequency == "monthly":
         monthly_day = request.form.get("monthlyDay") or None
@@ -423,6 +546,7 @@ def editHabit(habit_id):
         "habitWeekly": weekly_days,
         "habitMonthly": monthly_day,
         "habitIcon": request.form.get("habitIcon", "📋"),
+        "habitStatus": getattr(habit, "habitStatus", None),
     }
 
     Habit.updateHabit(habit_data)
@@ -465,8 +589,7 @@ def addGoal():
         "goalCategory": goal_cat,
         "goalStatus": "not started",
         "targetDate": target_date,
-        "progress": 0,
-        "goalIcon": request.form.get("goalIcon", "🎯"),
+        "goalIcon": request.form.get("goalIcon"),
     }
     
     Goal.createGoal(goal_data)
@@ -480,25 +603,49 @@ def deleteGoal(goal_id):
     Goal.deleteGoal(goal_id)
     return redirect("/dashboard")
 
-@app.route("/edit-goal/<int:goal_id>", methods=["GET", "POST"])
-def editGoal(goal_id):
+
+@app.route("/done-goal/<int:goal_id>", methods=["POST"])
+def doneGoal(goal_id):
+    if "user_id" not in session:
+        return redirect("/login")
+
+    goal = Goal.getGoalById(goal_id)
+    if not goal or goal.userId != session["user_id"]:
+        return redirect("/dashboard")
+
+    if not goalIsForToday(goal, date.today()):
+        return redirect("/dashboard")
+
+    Goal.updateGoal({
+        "id": goal_id,
+        "goalName": goal.goalName,
+        "goalDescription": goal.goalDescription,
+        "goalCategory": goal.goalCategory,
+        "goalStatus": "completed",
+        "targetDate": goal.targetDate,
+        "goalIcon": goal.goalIcon,
+    })
+    return redirect("/dashboard")
+
+@app.route("/edit-goal/<int:goalid>", methods=["GET", "POST"])
+def editGoal(goalid):
     if "user_id" not in session:
         return redirect("/login")
     
     if request.method == "GET":
-        goal = Goal.getGoalById(goal_id)
+        goal = Goal.getGoalById(goalid)
         return render_template("editGoal.html", goal=goal, min_date=date.today().isoformat())
     
-    user_id = session["user_id"]
-    goal_name = request.form.get("goalName", "").strip()
+    userId = session["user_id"]
+    goalName = request.form.get("goalName", "").strip()
     target_date = request.form.get("targetDate", "").strip()
 
-    if not goal_name:
-        goal = Goal.getGoalById(goal_id)
+    if not goalName:
+        goal = Goal.getGoalById(goalid)
         return render_template("editGoal.html", goal=goal, error="Goal name is required", min_date=date.today().isoformat())
 
-    if Goal.goalNameExists(user_id, goal_name, exclude_goal_id=goal_id):
-        goal = Goal.getGoalById(goal_id)
+    if Goal.goalNameExists(userId, goalName, exclude_goal_id=goalid):
+        goal = Goal.getGoalById(goalid)
         return render_template("editGoal.html", goal=goal, error="Goal name already exists", min_date=date.today().isoformat())
 
     from datetime import datetime
@@ -506,26 +653,52 @@ def editGoal(goal_id):
         try:
             target = datetime.strptime(target_date, "%Y-%m-%d").date()
             if target < date.today():
-                goal = Goal.getGoalById(goal_id)
+                goal = Goal.getGoalById(goalid)
                 return render_template("editGoal.html", goal=goal, error="Target date cannot be in the past", min_date=date.today().isoformat())
         except ValueError:
-            goal = Goal.getGoalById(goal_id)
+            goal = Goal.getGoalById(goalid)
             return render_template("editGoal.html", goal=goal, error="Invalid date format", min_date=date.today().isoformat())
 
     goal_data = {
-        "id": goal_id,
-        "userId": user_id,
-        "goalName": goal_name,
+        "id": goalid,
+        "userId": userId,
+        "goalName": goalName,
         "goalDescription": request.form.get("goalDescription"),
         "goalCategory": request.form.get("goalCategory"),
         "goalStatus": request.form.get("goalStatus"),
         "targetDate": target_date,
-        "progress": int(request.form.get("progress", 0)),
-        "goalIcon": request.form.get("goalIcon", "🎯"),
+        "goalIcon": request.form.get("goalIcon"),
     }
     
     Goal.updateGoal(goal_data)
     return redirect("/dashboard")
+
+@app.route("/search-habits", methods=["GET", "POST"])
+def searchHabits():
+    if "user_id" in session:
+        if request.method == "POST":
+            search = (request.form.get("search") or "").strip()
+            if search == "":
+                return redirect("/all-habits")
+            return redirect(url_for("searchHabits", search=search))
+
+        if request.args.get("search") is None:
+            allData = sortedHabits(session["user_id"])
+        else:
+            if request.args.get("search") == "":
+                allData = sortedHabits(session["user_id"])
+            else:
+                searchData = request.args.get("search")
+                allData = Habit.searchHabits(session["user_id"], searchData)
+        return render_template(
+            "allHabit.html",
+            username=session["username"],
+            avatar=checkAvatar(session.get("avatar")),
+            habits=allData,
+            habit_schedule_label=habitScheduleLabel,
+            search_query=request.args.get("search"),
+        )
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)
