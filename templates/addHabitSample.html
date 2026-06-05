@@ -146,7 +146,6 @@
 
         function updateBlocks() {
           const v = freqSelect.value;
-          // show weekly-days for both weekly and multiday
           weeklyBlock.classList.toggle('hidden', !(v === 'weekly' || v === 'multiday'));
           monthlyBlock.classList.toggle('hidden', v !== 'monthly');
           if (monthlyDay) monthlyDay.disabled = v !== 'monthly';
@@ -163,7 +162,6 @@
 
           function singleSelectHandler(e) {
             if (mode === 'weekly' && e.target.checked) {
-              // uncheck all others
               checks.forEach((other) => {
                 if (other !== e.target) other.checked = false;
               });

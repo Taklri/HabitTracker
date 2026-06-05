@@ -12,7 +12,7 @@ from models.goal import Goal
 AVATAR_FOLDER = os.path.join(app.root_path, "avatars")
 
 def allowedAvatars():
-    return sorted(User.ALLOWED_AVATARS)
+    return sorted(User.Avatars)
 
 def checkAvatar(value):
     return User.normalizeAvatar(value)
@@ -50,8 +50,8 @@ def loginProcess():
 def signupPage():
     return render_template(
         "signup.html",
-        allowed_avatars=allowedAvatars(),
-        default_avatar=User.DEFAULT_AVATAR,
+        Avatars=allowedAvatars(),
+        defaultAvatar=User.defaultAvatar,
     )
 
 @app.route("/signup/process", methods=["POST"])
@@ -71,32 +71,32 @@ def signupProcess():
         return render_template(
             "signup.html",
             error="Username cannot be blank",
-            allowed_avatars=allowedAvatars(),
-            default_avatar=selected_avatar,
+            Avatars=allowedAvatars(),
+            defaultAvatar=selected_avatar,
         )
 
     if User.usernameExists(username):
         return render_template(
             "signup.html",
             error="Username already exists",
-            allowed_avatars=allowedAvatars(),
-            default_avatar=selected_avatar,
+            Avatars=allowedAvatars(),
+            defaultAvatar=selected_avatar,
         )
 
     if len(password) < User.MIN_PASSWORD_LENGTH:
         return render_template(
             "signup.html",
             error=f"Password must be at least {User.MIN_PASSWORD_LENGTH} characters",
-            allowed_avatars=allowedAvatars(),
-            default_avatar=selected_avatar,
+            Avatars=allowedAvatars(),
+            defaultAvatar=selected_avatar,
         )
 
     if newUser["password"] != newUser["reenterpass"]:
         return render_template(
             "signup.html",
             error="Passwords do not match",
-            allowed_avatars=allowedAvatars(),
-            default_avatar=newUser["avatar"],
+            Avatars=allowedAvatars(),
+            defaultAvatar=newUser["avatar"],
         )
     else:
         User.insertUser(newUser)
@@ -116,7 +116,7 @@ def profilePage():
         "profile.html",
         username=user.username,
         selected_avatar=checkAvatar(user.avatar),
-        allowed_avatars=allowedAvatars(),
+        Avatars=allowedAvatars(),
     )
 
 
@@ -129,7 +129,6 @@ def updateAvatar():
     if not avatar:
         return redirect("/profile")
 
-    # call model (expects dict)
     res = User.updateAvatar({"id": session["user_id"], "avatar": avatar})
     if res is False:
         user = User.getUserById({"id": session["user_id"]})
@@ -137,18 +136,17 @@ def updateAvatar():
             "profile.html",
             username=user.username,
             selected_avatar=checkAvatar(user.avatar),
-            allowed_avatars=allowedAvatars(),
+            Avatars=allowedAvatars(),
             error="Failed to update avatar",
         )
 
-    # success — normalize then update session
     session["avatar"] = checkAvatar(avatar)
     user = User.getUserById({"id": session["user_id"]})
     return render_template(
         "profile.html",
         username=user.username,
         selected_avatar=checkAvatar (user.avatar),
-        allowed_avatars=allowedAvatars(),
+        Avatars=allowedAvatars(),
         success="Avatar updated",
     )
 
@@ -169,7 +167,7 @@ def profileProcess():
             "profile.html",
             username=session.get("username"),
             selected_avatar=avatar,
-            allowed_avatars=allowedAvatars(),
+            Avatars=allowedAvatars(),
             error="Username cannot be blank",
         )
 
@@ -178,7 +176,7 @@ def profileProcess():
             "profile.html",
             username=username,
             selected_avatar=avatar,
-            allowed_avatars=allowedAvatars(),
+            Avatars=allowedAvatars(),
             error="Username already exists",
         )
 
@@ -187,7 +185,7 @@ def profileProcess():
             "profile.html",
             username=username,
             selected_avatar=avatar,
-            allowed_avatars=allowedAvatars(),
+            Avatars=allowedAvatars(),
             error=f"Password must be at least {User.MIN_PASSWORD_LENGTH} characters",
         )
 
@@ -196,7 +194,7 @@ def profileProcess():
             "profile.html",
             username=username,
             selected_avatar=avatar,
-            allowed_avatars=allowedAvatars(),
+            Avatars=allowedAvatars(),
             error="Passwords do not match",
         )
 
@@ -310,16 +308,16 @@ def dashboard():
     user_id = session["user_id"]
     today = date.today()
 
-    selected_habit_category = request.args.get("habit_category", "").strip() or None
-    selected_goal_category = request.args.get("goal_category", "").strip() or None
+    selected_habitCategory = request.args.get("habitCategory", "").strip() or None
+    selected_goalCategory = request.args.get("goalCategory", "").strip() or None
 
-    if selected_habit_category:
-        all_habits = sorted(Habit.filterHabitsByCategory(user_id, selected_habit_category), key=habitSortKey)
+    if selected_habitCategory:
+        all_habits = sorted(Habit.filterHabitsByCategory(user_id, selected_habitCategory), key=habitSortKey)
     else:
         all_habits = sortedHabits(user_id)
 
-    if selected_goal_category:
-        all_goals = sorted(Goal.filterGoalsByCategory(user_id, selected_goal_category), key=goalSortKey)
+    if selected_goalCategory:
+        all_goals = sorted(Goal.filterGoalsByCategory(user_id, selected_goalCategory), key=goalSortKey)
     else:
         all_goals = sortedGoals(user_id)
 
@@ -340,8 +338,8 @@ def dashboard():
         goals=todays_goals,
         all_goals=all_goals,
         habit_schedule_label=habitScheduleLabel,
-        selected_habit_category=selected_habit_category,
-        selected_goal_category=selected_goal_category,
+        selected_habitCategory=selected_habitCategory,
+        selected_goalCategory=selected_goalCategory,
     )
 
 
@@ -351,7 +349,6 @@ def allHabits():
         return redirect("/login")
     user_id = session["user_id"]
 
-    # fetch all and then apply optional filters from query params
     habits = sortedHabits(user_id)
 
     search = (request.args.get("search") or "").strip().lower()
@@ -371,8 +368,8 @@ def allHabits():
         return True
 
     filtered = [h for h in habits if match(h)]
-    # build category list for dropdown
-    habit_categories = sorted({(h.habitCategory or "").strip() for h in habits if (h.habitCategory or "").strip()})
+
+    habitCategories = sorted({(h.habitCategory or "").strip() for h in habits if (h.habitCategory or "").strip()})
 
     return render_template(
         "allHabit.html",
@@ -380,7 +377,7 @@ def allHabits():
         avatar=checkAvatar(session.get("avatar")),
         habits=filtered,
         habit_schedule_label=habitScheduleLabel,
-        habit_categories=habit_categories,
+        habitCategories=habitCategories,
     )
 
 @app.route("/all-goals")
@@ -402,21 +399,20 @@ def allGoals():
             if (str(getattr(g, "goalCategory", "") or "").lower() != category):
                 return False
         if due:
-            # compare YYYY-MM-DD prefix
             if str(getattr(g, "targetDate", "") or "")[:10] != due:
                 return False
         return True
 
     filtered = [g for g in goals if match(g)]
-    # build category list for dropdown
-    goal_categories = sorted({(g.goalCategory or "").strip() for g in goals if (g.goalCategory or "").strip()})
+
+    goalCategories = sorted({(g.goalCategory or "").strip() for g in goals if (g.goalCategory or "").strip()})
 
     return render_template(
         "allGoals.html",
         username=session["username"],
         avatar=checkAvatar(session.get("avatar")),
         goals=filtered,
-        goal_categories=goal_categories,
+        goalCategories=goalCategories,
     )
 
 #habits
@@ -446,16 +442,16 @@ def addHabitProcess():
     elif habitFrequency == "monthly":
         monthly_day = request.form.get("monthlyDay") or None
 
-    habit_name = request.form.get("habitName", "").strip()
-    if not habit_name:
+    habitName = request.form.get("habitName", "").strip()
+    if not habitName:
         return render_template("addHabitSample.html", error="Habit name is required")
 
-    if Habit.habitNameExists(user_id, habit_name):
+    if Habit.habitNameExists(user_id, habitName):
         return render_template("addHabitSample.html", error="Habit name already exists")
 
     habit_data = {
         "userId": user_id,
-        "habitName": habit_name,
+        "habitName": habitName,
         "habitCategory": request.form.get("habitCategory"),
         "habitDescription": request.form.get("habitDescription"),
         "habitFrequency": habitFrequency,
@@ -467,21 +463,21 @@ def addHabitProcess():
     Habit.insertHabit(habit_data)
     return redirect("/dashboard")
 
-@app.route("/delete-habit/<int:habit_id>", methods=["POST"])
-def deleteHabit(habit_id):
+@app.route("/delete-habit/<int:habitId>", methods=["POST"])
+def deleteHabit(habitId):
     if "user_id" not in session:
         return redirect("/login")
     
-    Habit.deleteHabit(habit_id)
+    Habit.deleteHabit(habitId)
     return redirect("/dashboard")
 
 
-@app.route("/done-habit/<int:habit_id>", methods=["POST"])
-def doneHabit(habit_id):
+@app.route("/done-habit/<int:habitId>", methods=["POST"])
+def doneHabit(habitId):
     if "user_id" not in session:
         return redirect("/login")
 
-    habit = Habit.getHabitById(habit_id)
+    habit = Habit.getHabitById(habitId)
     if not habit or habit.userId != session["user_id"]:
         return redirect("/dashboard")
 
@@ -490,7 +486,7 @@ def doneHabit(habit_id):
         return redirect("/dashboard")
 
     Habit.updateHabit({
-        "id": habit_id,
+        "id": habitId,
         "habitName": habit.habitName,
         "habitCategory": habit.habitCategory,
         "habitDescription": habit.habitDescription,
@@ -502,19 +498,18 @@ def doneHabit(habit_id):
     })
     return redirect("/dashboard")
 
-@app.route("/edit-habit/<int:habit_id>", methods=["GET", "POST"])
-def editHabit(habit_id):
+@app.route("/edit-habit/<int:habitId>", methods=["GET", "POST"])
+def editHabit(habitId):
     if "user_id" not in session:
         return redirect("/login")
 
     if request.method == "GET":
-        habit = Habit.getHabitById(habit_id)
+        habit = Habit.getHabitById(habitId)
         if not habit:
             return redirect("/dashboard")
         return render_template("editPageSample.html", habit=habit)
 
-    # load existing habit for POST and ensure ownership
-    habit = Habit.getHabitById(habit_id)
+    habit = Habit.getHabitById(habitId)
     if not habit or habit.userId != session["user_id"]:
         return redirect("/dashboard")
 
@@ -527,19 +522,19 @@ def editHabit(habit_id):
     elif habitFrequency == "monthly":
         monthly_day = request.form.get("monthlyDay") or None
 
-    habit_name = request.form.get("habitName", "").strip()
-    if not habit_name:
-        habit = Habit.getHabitById(habit_id)
+    habitName = request.form.get("habitName", "").strip()
+    if not habitName:
+        habit = Habit.getHabitById(habitId)
         return render_template("editPageSample.html", habit=habit, error="Habit name is required")
 
-    if Habit.habitNameExists(session["user_id"], habit_name, exclude_habit_id=habit_id):
-        habit = Habit.getHabitById(habit_id)
+    if Habit.habitNameExists(session["user_id"], habitName, exclude_habit_id=habitId):
+        habit = Habit.getHabitById(habitId)
         return render_template("editPageSample.html", habit=habit, error="Habit name already exists")
 
     habit_data = {
-        "id": habit_id,
+        "id": habitId,
         "userId": session["user_id"],
-        "habitName": habit_name,
+        "habitName": habitName,
         "habitCategory": request.form.get("habitCategory"),
         "habitDescription": request.form.get("habitDescription"),
         "habitFrequency": habitFrequency,
@@ -561,15 +556,15 @@ def addGoal():
     if "user_id" not in session:
         return redirect("/login")
     
-    goal_name = request.form.get("goalName", "").strip()
-    goal_desc = request.form.get("goalDescription", "").strip()
-    goal_cat = request.form.get("goalCategory", "").strip()
+    goalName = request.form.get("goalName", "").strip()
+    goalDescription = request.form.get("goalDescription", "").strip()
+    goalCategory = request.form.get("goalCategory", "").strip()
     target_date = request.form.get("targetDate", "").strip()
 
-    if not goal_name:
+    if not goalName:
         return render_template("addGoal.html", error="Goal name is required", min_date=date.today().isoformat())
 
-    if Goal.goalNameExists(session["user_id"], goal_name):
+    if Goal.goalNameExists(session["user_id"], goalName):
         return render_template("addGoal.html", error="Goal name already exists", min_date=date.today().isoformat())
 
     from datetime import datetime
@@ -584,9 +579,9 @@ def addGoal():
     user_id = session["user_id"]
     goal_data = {
         "userId": user_id,
-        "goalName": goal_name,
-        "goalDescription": goal_desc,
-        "goalCategory": goal_cat,
+        "goalName": goalName,
+        "goalDescription": goalDescription,
+        "goalCategory": goalCategory,
         "goalStatus": "not started",
         "targetDate": target_date,
         "goalIcon": request.form.get("goalIcon"),
@@ -595,21 +590,21 @@ def addGoal():
     Goal.createGoal(goal_data)
     return redirect("/dashboard")
 
-@app.route("/delete-goal/<int:goal_id>", methods=["POST"])
-def deleteGoal(goal_id):
+@app.route("/delete-goal/<int:goalId>", methods=["POST"])
+def deleteGoal(goalId):
     if "user_id" not in session:
         return redirect("/login")
     
-    Goal.deleteGoal(goal_id)
+    Goal.deleteGoal(goalId)
     return redirect("/dashboard")
 
 
-@app.route("/done-goal/<int:goal_id>", methods=["POST"])
-def doneGoal(goal_id):
+@app.route("/done-goal/<int:goalId>", methods=["POST"])
+def doneGoal(goalId):
     if "user_id" not in session:
         return redirect("/login")
 
-    goal = Goal.getGoalById(goal_id)
+    goal = Goal.getGoalById(goalId)
     if not goal or goal.userId != session["user_id"]:
         return redirect("/dashboard")
 
@@ -617,7 +612,7 @@ def doneGoal(goal_id):
         return redirect("/dashboard")
 
     Goal.updateGoal({
-        "id": goal_id,
+        "id": goalId,
         "goalName": goal.goalName,
         "goalDescription": goal.goalDescription,
         "goalCategory": goal.goalCategory,
@@ -627,13 +622,13 @@ def doneGoal(goal_id):
     })
     return redirect("/dashboard")
 
-@app.route("/edit-goal/<int:goalid>", methods=["GET", "POST"])
-def editGoal(goalid):
+@app.route("/edit-goal/<int:goalId>", methods=["GET", "POST"])
+def editGoal(goalId):
     if "user_id" not in session:
         return redirect("/login")
     
     if request.method == "GET":
-        goal = Goal.getGoalById(goalid)
+        goal = Goal.getGoalById(goalId)
         return render_template("editGoal.html", goal=goal, min_date=date.today().isoformat())
     
     userId = session["user_id"]
@@ -641,11 +636,11 @@ def editGoal(goalid):
     target_date = request.form.get("targetDate", "").strip()
 
     if not goalName:
-        goal = Goal.getGoalById(goalid)
+        goal = Goal.getGoalById(goalId)
         return render_template("editGoal.html", goal=goal, error="Goal name is required", min_date=date.today().isoformat())
 
-    if Goal.goalNameExists(userId, goalName, exclude_goal_id=goalid):
-        goal = Goal.getGoalById(goalid)
+    if Goal.goalNameExists(userId, goalName, exclude_goal_id=goalId):
+        goal = Goal.getGoalById(goalId)
         return render_template("editGoal.html", goal=goal, error="Goal name already exists", min_date=date.today().isoformat())
 
     from datetime import datetime
@@ -653,14 +648,14 @@ def editGoal(goalid):
         try:
             target = datetime.strptime(target_date, "%Y-%m-%d").date()
             if target < date.today():
-                goal = Goal.getGoalById(goalid)
+                goal = Goal.getGoalById(goalId)
                 return render_template("editGoal.html", goal=goal, error="Target date cannot be in the past", min_date=date.today().isoformat())
         except ValueError:
-            goal = Goal.getGoalById(goalid)
+            goal = Goal.getGoalById(goalId)
             return render_template("editGoal.html", goal=goal, error="Invalid date format", min_date=date.today().isoformat())
 
     goal_data = {
-        "id": goalid,
+        "id": goalId,
         "userId": userId,
         "goalName": goalName,
         "goalDescription": request.form.get("goalDescription"),

@@ -2,8 +2,8 @@ from mysqlconnection import MysqlConnection
 
 class User:
     MIN_PASSWORD_LENGTH = 8
-    DEFAULT_AVATAR = "panda"
-    ALLOWED_AVATARS = {"chicken", "dog", "gorilla", "panda", "rabbit"}
+    defaultAvatar = "panda"
+    Avatars = {"chicken", "dog", "gorilla", "panda", "rabbit"}
 
     # constructor
     def __init__(self, data):
@@ -15,11 +15,10 @@ class User:
     @classmethod
     def normalizeAvatar(cls, avatar):
         avatar_name = str(avatar or "").strip().lower()
-        if avatar_name in cls.ALLOWED_AVATARS:
+        if avatar_name in cls.Avatars:
             return avatar_name
-        return cls.DEFAULT_AVATAR
+        return cls.defaultAvatar
         
-    # methods exclusive for user schema
     @classmethod
     def insertUser(cls, data):
         insert_data = {

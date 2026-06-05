@@ -435,16 +435,16 @@
           </div>
           <div class="w-8 h-0.5 bg-zinc-500 rounded-full"></div>
           <form method="GET" class="ml-4">
-            <input type="hidden" name="goal_category" value="{{ selected_goal_category or '' }}" />
+            <input type="hidden" name="habitCategory" value="{{ selected_habitCategory or '' }}" />
             <label class="sr-only">Filter habits by category</label>
-            <select name="habit_category" onchange="this.form.submit()" class="bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs rounded-xl px-3 py-2">
-              <option value="" {% if not selected_habit_category %}selected{% endif %}>All</option>
-              <option value="health" {% if selected_habit_category == 'health' %}selected{% endif %}>Health</option>
-              <option value="productivity" {% if selected_habit_category == 'productivity' %}selected{% endif %}>Productivity</option>
-              <option value="finance" {% if selected_habit_category == 'finance' %}selected{% endif %}>Finance</option>
-              <option value="learning" {% if selected_habit_category == 'learning' %}selected{% endif %}>Learning</option>
-              <option value="fitness" {% if selected_habit_category == 'fitness' %}selected{% endif %}>Fitness</option>
-              <option value="personal" {% if selected_habit_category == 'personal' %}selected{% endif %}>Personal</option>
+            <select name="habitCategory" onchange="this.form.submit()" class="bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs rounded-xl px-3 py-2">
+              <option value="" {% if not selected_habitCategory %}selected{% endif %}>All</option>
+              <option value="health" {% if selected_habitCategory == 'health' %}selected{% endif %}>Health</option>
+              <option value="productivity" {% if selected_habitCategory == 'productivity' %}selected{% endif %}>Productivity</option>
+              <option value="finance" {% if selected_habitCategory == 'finance' %}selected{% endif %}>Finance</option>
+              <option value="learning" {% if selected_habitCategory == 'learning' %}selected{% endif %}>Learning</option>
+              <option value="fitness" {% if selected_habitCategory == 'fitness' %}selected{% endif %}>Fitness</option>
+              <option value="personal" {% if selected_habitCategory == 'personal' %}selected{% endif %}>Personal</option>
             </select>
           </form>
         </div>
@@ -578,16 +578,16 @@
           </div>
           <div class="w-8 h-0.5 bg-blue-500 rounded-full"></div>
           <form method="GET" class="ml-4">
-            <input type="hidden" name="habit_category" value="{{ selected_habit_category or '' }}" />
+            <input type="hidden" name="goalCategory" value="{{ selected_goalCategory or '' }}" />
             <label class="sr-only">Filter goals by category</label>
-            <select name="goal_category" onchange="this.form.submit()" class="bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs rounded-xl px-3 py-2">
-              <option value="" {% if not selected_goal_category %}selected{% endif %}>All</option>
-              <option value="health" {% if selected_goal_category == 'health' %}selected{% endif %}>Health</option>
-              <option value="productivity" {% if selected_goal_category == 'productivity' %}selected{% endif %}>Productivity</option>
-              <option value="finance" {% if selected_goal_category == 'finance' %}selected{% endif %}>Finance</option>
-              <option value="learning" {% if selected_goal_category == 'learning' %}selected{% endif %}>Learning</option>
-              <option value="fitness" {% if selected_goal_category == 'fitness' %}selected{% endif %}>Fitness</option>
-              <option value="personal" {% if selected_goal_category == 'personal' %}selected{% endif %}>Personal</option>
+            <select name="goalCategory" onchange="this.form.submit()" class="bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs rounded-xl px-3 py-2">
+              <option value="" {% if not selected_goalCategory %}selected{% endif %}>All</option>
+              <option value="health" {% if selected_goalCategory == 'health' %}selected{% endif %}>Health</option>
+              <option value="productivity" {% if selected_goalCategory == 'productivity' %}selected{% endif %}>Productivity</option>
+              <option value="finance" {% if selected_goalCategory == 'finance' %}selected{% endif %}>Finance</option>
+              <option value="learning" {% if selected_goalCategory == 'learning' %}selected{% endif %}>Learning</option>
+              <option value="fitness" {% if selected_goalCategory == 'fitness' %}selected{% endif %}>Fitness</option>
+              <option value="personal" {% if selected_goalCategory == 'personal' %}selected{% endif %}>Personal</option>
             </select>
           </form>
         </div>
