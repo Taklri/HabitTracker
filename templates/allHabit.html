@@ -17,7 +17,6 @@
         <nav class="sticky top-0 z-50 bg-zinc-900/90 backdrop-blur-xl border-b border-zinc-800">
             <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
                 <div>
-                    <div class="text-xs uppercase tracking-[0.35em] text-zinc-500">HabitUp</div>
                     <h1 class="text-lg font-semibold tracking-tight">All Habits</h1>
                 </div>
                 <a href="/dashboard" class="text-sm text-zinc-400 hover:text-zinc-200 border border-zinc-700 hover:border-zinc-600 px-4 py-1.5 rounded-lg transition-all">Back</a>
@@ -75,7 +74,7 @@
                                     <form action="/done-habit/{{ habit.id }}" method="POST" class="inline-block">
                                         <button type="submit" class="text-sm bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg">Done</button>
                                     </form>
-                                    <form action="/delete-habit/{{ habit.id }}" method="POST" class="inline-block" onsubmit="return confirm('Delete this habit?');">
+                                    <form action="/delete-habit/{{ habit.id }}" method="POST" class="inline-block" onsubmit="return confirmDeletion();">
                                         <button type="submit" class="text-sm bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button>
                                     </form>
                                 </div>
@@ -93,5 +92,10 @@
                 {% endif %}
             </div>
         </main>
+        <script>
+            function confirmDeletion() {
+                return confirm('Delete this item?');
+            }
+        </script>
     </body>
 </html>
