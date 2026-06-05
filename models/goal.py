@@ -19,9 +19,9 @@ class Goal:
         return MysqlConnection("habitUp").query_start(query, data)
 
     @classmethod
-    def getGoalsByUser(cls, user_id):
-        query = """SELECT * FROM goals WHERE userId = %(user_id)s;"""
-        result = MysqlConnection("habitUp").query_start(query, {"user_id": user_id})
+    def getGoalsByUser(cls, userId):
+        query = """SELECT * FROM goals WHERE userId = %(userId)s;"""
+        result = MysqlConnection("habitUp").query_start(query, {"userId": userId})
         goals = []
         if len(result) > 0:
             for row in result:
@@ -35,22 +35,22 @@ class Goal:
         return MysqlConnection("habitUp").query_start(query, data)
 
     @classmethod
-    def deleteGoal(cls, goal_id):
+    def deleteGoal(cls, goalId):
         query = """DELETE FROM goals WHERE id = %(id)s;"""
-        return MysqlConnection("habitUp").query_start(query, {"id": goal_id})
+        return MysqlConnection("habitUp").query_start(query, {"id": goalId})
 
     @classmethod
-    def getGoalById(cls, goal_id):
+    def getGoalById(cls, goalId):
         query = """SELECT * FROM goals WHERE id = %(id)s;"""
-        result = MysqlConnection("habitUp").query_start(query, {"id": goal_id})
+        result = MysqlConnection("habitUp").query_start(query, {"id": goalId})
         if len(result) > 0:
             return cls(result[0])
         return None
     
     @classmethod
-    def filterGoalsByCategory(cls, user_id, category):
-        query = """SELECT * FROM goals WHERE userId = %(user_id)s AND goalCategory = %(category)s;"""
-        result = MysqlConnection("habitUp").query_start(query, {"user_id": user_id, "category": category})
+    def filterGoalsByCategory(cls, userId, category):
+        query = """SELECT * FROM goals WHERE userId = %(userId)s AND goalCategory = %(category)s;"""
+        result = MysqlConnection("habitUp").query_start(query, {"userId": userId, "category": category})
         goals = []
         if len(result) > 0:
             for row in result:
@@ -58,14 +58,14 @@ class Goal:
         return goals
 
     @classmethod
-    def goalNameExists(cls, user_id, goal_name, exclude_goal_id=None):
+    def goalNameExists(cls, userId, goalName, exclude_goal_id=None):
         params = {
-            "user_id": user_id,
-            "goalName": str(goal_name or "").strip().lower(),
+            "userId": userId,
+            "goalName": str(goalName or "").strip().lower(),
         }
         query = """
         SELECT id FROM goals
-        WHERE userId = %(user_id)s
+        WHERE userId = %(userId)s
           AND LOWER(goalName) = %(goalName)s
         """
 

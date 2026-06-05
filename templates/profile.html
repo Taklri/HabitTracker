@@ -1,158 +1,298 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="min-h-screen bg-zinc-900 text-zinc-100 px-4 py-10">
-    <main class="mx-auto w-full max-w-2xl rounded-3xl border border-zinc-800 bg-zinc-850/80 p-8 shadow-2xl shadow-black/30">
-        <div class="flex items-center justify-between gap-4">
-            <div>
-                <p class="text-xs uppercase tracking-[0.22em] text-zinc-500">Profile</p>
-                <h1 class="mt-2 text-2xl font-semibold text-zinc-50">Update your details, {{ username }}</h1>
-                <p class="mt-2 text-sm text-zinc-400">Edit your username, password, and profile icon from the free options below.</p>
-            </div>
-            <a href="/dashboard" class="inline-flex rounded-lg border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-300 transition hover:border-zinc-600 hover:text-zinc-100">
-                Back
-            </a>
+  </head>
+  <body class="min-h-screen bg-zinc-900 text-zinc-100 px-4 py-10">
+    <main
+      class="mx-auto w-full max-w-2xl rounded-3xl border border-zinc-800 bg-zinc-850/80 p-8 shadow-2xl shadow-black/30"
+    >
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <p class="text-xs uppercase tracking-[0.22em] text-zinc-500">
+            Profile
+          </p>
+          <h1 class="mt-2 text-2xl font-semibold text-zinc-50">
+            Update your details, {{ username }}
+          </h1>
+          <p class="mt-2 text-sm text-zinc-400">
+            Edit your username, password, and profile icon from the free options
+            below.
+          </p>
+        </div>
+        <a
+          href="/dashboard"
+          class="inline-flex rounded-lg border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-300 transition hover:border-zinc-600 hover:text-zinc-100"
+        >
+          Back
+        </a>
+      </div>
+
+      {% if error %}
+      <p
+        class="mt-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300"
+      >
+        {{ error }}
+      </p>
+      {% endif %} {% if success %}
+      <p
+        class="mt-6 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300"
+      >
+        {{ success }}
+      </p>
+      {% endif %}
+
+      <form
+        id="update-avatar-form"
+        action="/update-avatar"
+        method="POST"
+        class="hidden"
+      >
+        <input type="hidden" name="avatar" id="avatar-hidden" />
+      </form>
+
+      <form
+        id="profile-form"
+        action="/profile/process"
+        method="POST"
+        class="mt-8 space-y-6"
+        novalidate
+      >
+        <div>
+          <label
+            for="username"
+            class="mb-2 block text-sm font-medium text-zinc-300"
+            >Username</label
+          >
+          <input
+            id="username"
+            name="username"
+            type="text"
+            placeholder="{{username}}"
+            required
+            class="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10"
+          />
         </div>
 
-        {% if error %}
-        <p class="mt-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">{{ error }}</p>
-        {% endif %}
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label
+              for="password"
+              class="mb-2 block text-sm font-medium text-zinc-300"
+              >New Password</label
+            >
+            <input
+              id="password"
+              name="password"
+              type="password"
+              minlength="8"
+              placeholder="Leave blank to keep current password"
+              class="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10"
+            />
+            <p id="password-feedback" class="mt-2 text-xs text-zinc-500">
+              Leave blank to keep your current password.
+            </p>
+          </div>
+          <div>
+            <label
+              for="reenterpass"
+              class="mb-2 block text-sm font-medium text-zinc-300"
+              >Re-enter Password</label
+            >
+            <input
+              id="reenterpass"
+              name="reenterpass"
+              type="password"
+              placeholder="Confirm new password"
+              class="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10"
+            />
+            <p id="confirm-feedback" class="mt-2 text-xs text-zinc-500">
+              Leave blank to keep your current password.
+            </p>
+          </div>
+        </div>
 
-        {% if success %}
-        <p class="mt-6 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">{{ success }}</p>
-        {% endif %}
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-5">
+          {% for avatar in Avatars %}
+          <label class="cursor-pointer">
+            <input type="radio" name="avatar" value="{{ avatar }}" class="peer
+            sr-only" {% if avatar == selected_avatar %}checked{% endif %}>
+            <span
+              class="block rounded-2xl border border-zinc-700 bg-zinc-900/60 p-3 transition peer-checked:border-emerald-500 peer-checked:ring-2 peer-checked:ring-emerald-500/30 hover:border-zinc-500"
+            >
+              <img
+                src="/avatars/{{ avatar }}.png"
+                alt="{{ avatar }} avatar"
+                class="mx-auto h-14 w-14 object-contain"
+              />
+              <span
+                class="mt-2 block text-center text-xs font-medium uppercase tracking-wide text-zinc-400"
+                >{{ avatar }}</span
+              >
+            </span>
+          </label>
+          {% endfor %}
+        </div>
 
-        <form id="update-avatar-form" action="/update-avatar" method="POST" class="hidden">
-            <input type="hidden" name="avatar" id="avatar-hidden" />
-        </form>
-
-        <form id="profile-form" action="/profile/process" method="POST" class="mt-8 space-y-6" novalidate>
-            <div>
-                <label for="username" class="mb-2 block text-sm font-medium text-zinc-300">Username</label>
-                <input id="username" name="username" type="text" placeholder="{{username}}" required class="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10">
-            </div>
-
-            <div class="grid gap-4 sm:grid-cols-2">
-                <div>
-                    <label for="password" class="mb-2 block text-sm font-medium text-zinc-300">New Password</label>
-                    <input id="password" name="password" type="password" minlength="8" placeholder="Leave blank to keep current password" class="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10">
-                    <p id="password-feedback" class="mt-2 text-xs text-zinc-500">Leave blank to keep your current password.</p>
-                </div>
-                <div>
-                    <label for="reenterpass" class="mb-2 block text-sm font-medium text-zinc-300">Re-enter Password</label>
-                    <input id="reenterpass" name="reenterpass" type="password" placeholder="Confirm new password" class="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10">
-                    <p id="confirm-feedback" class="mt-2 text-xs text-zinc-500">Leave blank to keep your current password.</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3 sm:grid-cols-5">
-                {% for avatar in allowed_avatars %}
-                <label class="cursor-pointer">
-                    <input type="radio" name="avatar" value="{{ avatar }}" class="peer sr-only" {% if avatar == selected_avatar %}checked{% endif %}>
-                    <span class="block rounded-2xl border border-zinc-700 bg-zinc-900/60 p-3 transition peer-checked:border-emerald-500 peer-checked:ring-2 peer-checked:ring-emerald-500/30 hover:border-zinc-500">
-                        <img src="/avatars/{{ avatar }}.png" alt="{{ avatar }} avatar" class="mx-auto h-14 w-14 object-contain" />
-                        <span class="mt-2 block text-center text-xs font-medium uppercase tracking-wide text-zinc-400">{{ avatar }}</span>
-                    </span>
-                </label>
-                {% endfor %}
-            </div>
-
-            <button id="submit-button" type="submit" class="inline-flex rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-zinc-950 transition hover:bg-emerald-400">
-                Save Changes
-            </button>
-        </form>
+        <button
+          id="submit-button"
+          type="submit"
+          class="inline-flex rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-zinc-950 transition hover:bg-emerald-400"
+        >
+          Save Changes
+        </button>
+      </form>
     </main>
 
     <script>
-        document.querySelectorAll('input[name="avatar"]').forEach((r) => {
-            r.addEventListener('change', (e) => {
-                const val = e.target.value;
-                const hidden = document.getElementById('avatar-hidden');
-                if (!hidden) return;
-                hidden.value = val;
-                document.getElementById('update-avatar-form').submit();
-            });
+      document.querySelectorAll('input[name="avatar"]').forEach((r) => {
+        r.addEventListener("change", (e) => {
+          const val = e.target.value;
+          const hidden = document.getElementById("avatar-hidden");
+          if (!hidden) return;
+          hidden.value = val;
+          document.getElementById("update-avatar-form").submit();
         });
+      });
 
-        const form = document.getElementById('profile-form');
-        const passwordInput = document.getElementById('password');
-        const confirmInput = document.getElementById('reenterpass');
-        const passwordFeedback = document.getElementById('password-feedback');
-        const confirmFeedback = document.getElementById('confirm-feedback');
-        const submitButton = document.getElementById('submit-button');
+      const form = document.getElementById("profile-form");
+      const passwordInput = document.getElementById("password");
+      const confirmInput = document.getElementById("reenterpass");
+      const passwordFeedback = document.getElementById("password-feedback");
+      const confirmFeedback = document.getElementById("confirm-feedback");
+      const submitButton = document.getElementById("submit-button");
 
-        const validBorderClasses = ['border-emerald-500', 'focus:border-emerald-500', 'focus:ring-emerald-500/30'];
-        const invalidBorderClasses = ['border-red-500', 'focus:border-red-500', 'focus:ring-red-500/30'];
+      const validBorderClasses = [
+        "border-emerald-500",
+        "focus:border-emerald-500",
+        "focus:ring-emerald-500/30",
+      ];
+      const invalidBorderClasses = [
+        "border-red-500",
+        "focus:border-red-500",
+        "focus:ring-red-500/30",
+      ];
 
-        function setFieldState(input, messageElement, isValid, message) {
-            input.classList.remove(...validBorderClasses, ...invalidBorderClasses);
-            if (isValid) {
-                input.classList.add('border-emerald-500', 'focus:border-emerald-500', 'focus:ring-emerald-500/30');
-            } else {
-                input.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-500/30');
-            }
-            messageElement.textContent = message;
-            messageElement.className = `mt-2 text-xs ${isValid ? 'text-emerald-400' : 'text-red-400'}`;
+      function setFieldState(input, messageElement, isValid, message) {
+        input.classList.remove(...validBorderClasses, ...invalidBorderClasses);
+        if (isValid) {
+          input.classList.add(
+            "border-emerald-500",
+            "focus:border-emerald-500",
+            "focus:ring-emerald-500/30"
+          );
+        } else {
+          input.classList.add(
+            "border-red-500",
+            "focus:border-red-500",
+            "focus:ring-red-500/30"
+          );
+        }
+        messageElement.textContent = message;
+        messageElement.className = `mt-2 text-xs ${
+          isValid ? "text-emerald-400" : "text-red-400"
+        }`;
+      }
+
+      function validatePasswordChange() {
+        const password = passwordInput.value;
+        const confirmPassword = confirmInput.value;
+        const hasPassword = password.length > 0;
+        const hasConfirm = confirmPassword.length > 0;
+        const passwordLengthValid = password.length >= 8;
+        const passwordsMatch =
+          password && confirmPassword && password === confirmPassword;
+        const passwordChangeRequested = hasPassword || hasConfirm;
+
+        if (!passwordChangeRequested) {
+          passwordInput.classList.remove(
+            ...validBorderClasses,
+            ...invalidBorderClasses
+          );
+          confirmInput.classList.remove(
+            ...validBorderClasses,
+            ...invalidBorderClasses
+          );
+          passwordFeedback.textContent =
+            "Leave blank to keep your current password.";
+          passwordFeedback.className = "mt-2 text-xs text-zinc-500";
+          confirmFeedback.textContent =
+            "Leave blank to keep your current password.";
+          confirmFeedback.className = "mt-2 text-xs text-zinc-500";
+          submitButton.disabled = false;
+          submitButton.classList.remove("opacity-50", "cursor-not-allowed");
+          return;
         }
 
-        function validatePasswordChange() {
-            const password = passwordInput.value;
-            const confirmPassword = confirmInput.value;
-            const hasPassword = password.length > 0;
-            const hasConfirm = confirmPassword.length > 0;
-            const passwordLengthValid = password.length >= 8;
-            const passwordsMatch = password && confirmPassword && password === confirmPassword;
-            const passwordChangeRequested = hasPassword || hasConfirm;
-
-            if (!passwordChangeRequested) {
-                passwordInput.classList.remove(...validBorderClasses, ...invalidBorderClasses);
-                confirmInput.classList.remove(...validBorderClasses, ...invalidBorderClasses);
-                passwordFeedback.textContent = 'Leave blank to keep your current password.';
-                passwordFeedback.className = 'mt-2 text-xs text-zinc-500';
-                confirmFeedback.textContent = 'Leave blank to keep your current password.';
-                confirmFeedback.className = 'mt-2 text-xs text-zinc-500';
-                submitButton.disabled = false;
-                submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
-                return;
-            }
-
-            if (!hasPassword) {
-                setFieldState(passwordInput, passwordFeedback, false, 'Enter a new password to continue.');
-            } else if (passwordLengthValid) {
-                setFieldState(passwordInput, passwordFeedback, true, 'Password length looks good.');
-            } else {
-                setFieldState(passwordInput, passwordFeedback, false, 'Password must be at least 8 characters.');
-            }
-
-            if (!hasConfirm) {
-                setFieldState(confirmInput, confirmFeedback, false, 'Confirm the new password.');
-            } else if (passwordsMatch) {
-                setFieldState(confirmInput, confirmFeedback, true, 'Passwords match.');
-            } else {
-                setFieldState(confirmInput, confirmFeedback, false, 'Passwords do not match.');
-            }
-
-            const canSubmit = hasPassword && hasConfirm && passwordLengthValid && passwordsMatch;
-            submitButton.disabled = !canSubmit;
-            submitButton.classList.toggle('opacity-50', submitButton.disabled);
-            submitButton.classList.toggle('cursor-not-allowed', submitButton.disabled);
+        if (!hasPassword) {
+          setFieldState(
+            passwordInput,
+            passwordFeedback,
+            false,
+            "Enter a new password to continue."
+          );
+        } else if (passwordLengthValid) {
+          setFieldState(
+            passwordInput,
+            passwordFeedback,
+            true,
+            "Password length looks good."
+          );
+        } else {
+          setFieldState(
+            passwordInput,
+            passwordFeedback,
+            false,
+            "Password must be at least 8 characters."
+          );
         }
 
-        passwordInput.addEventListener('input', validatePasswordChange);
-        confirmInput.addEventListener('input', validatePasswordChange);
-        form.addEventListener('submit', (event) => {
-            validatePasswordChange();
-            if (!form.checkValidity() || submitButton.disabled) {
-                event.preventDefault();
-            }
-        });
+        if (!hasConfirm) {
+          setFieldState(
+            confirmInput,
+            confirmFeedback,
+            false,
+            "Confirm the new password."
+          );
+        } else if (passwordsMatch) {
+          setFieldState(
+            confirmInput,
+            confirmFeedback,
+            true,
+            "Passwords match."
+          );
+        } else {
+          setFieldState(
+            confirmInput,
+            confirmFeedback,
+            false,
+            "Passwords do not match."
+          );
+        }
 
+        const canSubmit =
+          hasPassword && hasConfirm && passwordLengthValid && passwordsMatch;
+        submitButton.disabled = !canSubmit;
+        submitButton.classList.toggle("opacity-50", submitButton.disabled);
+        submitButton.classList.toggle(
+          "cursor-not-allowed",
+          submitButton.disabled
+        );
+      }
+
+      passwordInput.addEventListener("input", validatePasswordChange);
+      confirmInput.addEventListener("input", validatePasswordChange);
+      form.addEventListener("submit", (event) => {
         validatePasswordChange();
+        if (!form.checkValidity() || submitButton.disabled) {
+          event.preventDefault();
+        }
+      });
+
+      validatePasswordChange();
     </script>
-</body>
+  </body>
 </html>

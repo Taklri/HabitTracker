@@ -23,9 +23,9 @@ class Habit:
         return MysqlConnection("habitUp").query_start(query, data)
     
     @classmethod
-    def getHabitsByUser(cls, user_id):
+    def getHabitsByUser(cls, userId):
         query = """SELECT * FROM habit WHERE userId = %(userId)s;"""
-        result = MysqlConnection("habitUp").query_start(query, {"userId": user_id})
+        result = MysqlConnection("habitUp").query_start(query, {"userId": userId})
         habits = []
         if len(result) > 0:
             for row in result:
@@ -33,17 +33,17 @@ class Habit:
         return habits
 
     @classmethod
-    def getHabitById(cls, habit_id):
+    def getHabitById(cls, habitId):
         query = """SELECT * FROM habit WHERE id = %(id)s;"""
-        result = MysqlConnection("habitUp").query_start(query, {"id": habit_id})
+        result = MysqlConnection("habitUp").query_start(query, {"id": habitId})
         if len(result) > 0:
             return cls(result[0])
         return None
 
     @classmethod
-    def deleteHabit(cls, habit_id):
+    def deleteHabit(cls, habitId):
         query = """DELETE FROM habit WHERE id = %(id)s;"""
-        return MysqlConnection("habitUp").query_start(query, {"id": habit_id})
+        return MysqlConnection("habitUp").query_start(query, {"id":habitId})
     
     @classmethod
     def editHabit(cls, data):
@@ -55,9 +55,9 @@ class Habit:
         return cls.editHabit(data)
     
     @classmethod
-    def filterHabitsByCategory(cls, user_id, category):
+    def filterHabitsByCategory(cls, userId, category):
         query = """SELECT * FROM habit WHERE userId = %(userId)s AND habitCategory = %(category)s;"""
-        result = MysqlConnection("habitUp").query_start(query, {"userId": user_id, "category": category})
+        result = MysqlConnection("habitUp").query_start(query, {"userId": userId, "category": category})
         habits = []
         if len(result) > 0:
             for row in result:
@@ -65,10 +65,10 @@ class Habit:
         return habits
 
     @classmethod
-    def habitNameExists(cls, user_id, habit_name, exclude_habit_id=None):
+    def habitNameExists(cls, userId, habitName, exclude_habit_id=None):
         params = {
-            "userId": user_id,
-            "habitName": str(habit_name or "").strip().lower(),
+            "userId": userId,
+            "habitName": str(habitName or "").strip().lower(),
         }
         query = """SELECT id FROM habit WHERE userId = %(userId)s AND LOWER(habitName) = %(habitName)s"""
 
@@ -81,11 +81,11 @@ class Habit:
         return len(result) > 0
     
     @classmethod
-    def searchHabits(cls, user_id, search):
+    def searchHabits(cls, userId, search):
         normalized_search = str(search or "").lower()
         normalized_search = "".join(ch for ch in normalized_search if ch.isalnum())
 
-        all_habits = cls.getHabitsByUser(user_id)
+        all_habits = cls.getHabitsByUser(userId)
         habits = []
 
         for habit in all_habits:
