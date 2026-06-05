@@ -59,20 +59,20 @@ def signupProcess():
     username = request.form.get("username", "").strip()
     password = request.form.get("password", "")
     reenterpass = request.form.get("reenterpass", "")
-    selected_avatar = checkAvatar(request.form.get("avatar"))
+    selectedAvatar = checkAvatar(request.form.get("avatar"))
 
     newUser={
         "username": username,
         "password": password,
         "reenterpass": reenterpass,
-        "avatar": selected_avatar,
+        "avatar": selectedAvatar,
     }
     if not username:
         return render_template(
             "signup.html",
             error="Username cannot be blank",
             allowed_avatars=allowedAvatars(),
-            default_avatar=selected_avatar,
+            default_avatar=selectedAvatar,
         )
 
     if User.usernameExists(username):
@@ -80,7 +80,7 @@ def signupProcess():
             "signup.html",
             error="Username already exists",
             allowed_avatars=allowedAvatars(),
-            default_avatar=selected_avatar,
+            default_avatar=selectedAvatar,
         )
 
     if len(password) < User.MIN_PASSWORD_LENGTH:
@@ -88,7 +88,7 @@ def signupProcess():
             "signup.html",
             error=f"Password must be at least {User.MIN_PASSWORD_LENGTH} characters",
             allowed_avatars=allowedAvatars(),
-            default_avatar=selected_avatar,
+            default_avatar=selectedAvatar,
         )
 
     if newUser["password"] != newUser["reenterpass"]:
@@ -129,7 +129,6 @@ def updateAvatar():
     if not avatar:
         return redirect("/profile")
 
-    # call model (expects dict)
     res = User.updateAvatar({"id": session["user_id"], "avatar": avatar})
     if res is False:
         user = User.getUserById({"id": session["user_id"]})
@@ -141,7 +140,6 @@ def updateAvatar():
             error="Failed to update avatar",
         )
 
-    # success — normalize then update session
     session["avatar"] = checkAvatar(avatar)
     user = User.getUserById({"id": session["user_id"]})
     return render_template(
